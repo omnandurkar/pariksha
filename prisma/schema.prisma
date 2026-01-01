@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  password      String
+  role          String    @default("STUDENT") // ADMIN, STUDENT
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  attempts      Attempt[]
+  assignedExams ExamAssignment[]
+  groups        GroupMember[]
+}
+
+model Exam {
+  id          String   @id @default(cuid())
+  title       String
+  description String?
+  duration    Int      // in minutes
+  // Scheduler
+  startDate         DateTime? // When the exam opens
+  endDate           DateTime? // When the exam closes (strict cut-off)
+  resultDate        DateTime? // When results are published (if publishResults is true)
+  isActive    Boolean  @default(false)
+  publishResults Boolean @default(false)
+  issueCertificate Boolean @default(false)
+  passingPercentage Int @default(40)
+  maxAttempts Int      @default(1) // Default attempts allowed for this exam
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  questions   Question[]
+  attempts    Attempt[]
+  assignments ExamAssignment[]
+}
+
+model Group {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  members     GroupMember[]
+}
+
+model GroupMember {
+  id        String   @id @default(cuid())
+  groupId   String
+  userId    String
+  joinedAt  DateTime @default(now())
+
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([groupId, userId])
+}
+
+model ExamAssignment {
+  id        String   @id @default(cuid())
+  userId    String
+  examId    String
+  assignedAt DateTime @default(now())
+  allowedAttempts Int? // Override for specific user. If null, use Exam.maxAttempts
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exam      Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, examId])
+}
+
+model Question {
+  id        String   @id @default(cuid())
+  text      String
+  marks     Int      @default(1)
+  examId    String
+  
+  exam      Exam     @relation(fields: [examId], references: [id], onDelete: Cascade)
+  options   Option[]
+  answers   Answer[]
+}
+
+model Option {
+  id         String   @id @default(cuid())
+  text       String
+  isCorrect  Boolean  @default(false)
+  questionId String
+
+
+
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  answers    Answer[]
+}
+
+model Attempt {
+  id         String    @id @default(cuid())
+  userId     String
+  examId     String
+  startTime  DateTime  @default(now())
+  submitTime DateTime?
+  score      Int?
+  status     String    @default("STARTED") // STARTED, COMPLETED
+  adminRemark String? // Optional remark from admin
+  
+  isRetestRequested Boolean @default(false)
+  retestReason      String?
+
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exam       Exam      @relation(fields: [examId], references: [id], onDelete: Cascade)
+  answers    Answer[]
+}
+
+model Answer {
+  id               String   @id @default(cuid())
+  attemptId        String
+  questionId       String
+  selectedOptionId String
+  
+  attempt          Attempt  @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  question         Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  selectedOption   Option   @relation(fields: [selectedOptionId], references: [id], onDelete: Cascade)
+
+  isMarked         Boolean  @default(false)
+
+  @@unique([attemptId, questionId])
+}
+
+model AccessRequest {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String   // Hashed temporarily
+  phone     String?
+  status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
+  createdAt DateTime @default(now())
+}

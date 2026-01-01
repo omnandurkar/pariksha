@@ -1,0 +1,112 @@
+[
+    {
+        "text": "What is the capital of France?",
+        "marks": 1,
+        "options": [
+            {
+                "text": "Berlin",
+                "isCorrect": false
+            },
+            {
+                "text": "Madrid",
+                "isCorrect": false
+            },
+            {
+                "text": "Paris",
+                "isCorrect": true
+            },
+            {
+                "text": "Lisbon",
+                "isCorrect": false
+            }
+        ]
+    },
+    {
+        "text": "Which planet is known as the Red Planet?",
+        "marks": 1,
+        "options": [
+            {
+                "text": "Earth",
+                "isCorrect": false
+            },
+            {
+                "text": "Mars",
+                "isCorrect": true
+            },
+            {
+                "text": "Jupiter",
+                "isCorrect": false
+            },
+            {
+                "text": "Saturn",
+                "isCorrect": false
+            }
+        ]
+    },
+    {
+        "text": "What is the largest mammal in the world?",
+        "marks": 2,
+        "options": [
+            {
+                "text": "Elephant",
+                "isCorrect": false
+            },
+            {
+                "text": "Blue Whale",
+                "isCorrect": true
+            },
+            {
+                "text": "Great White Shark",
+                "isCorrect": false
+            },
+            {
+                "text": "Giraffe",
+                "isCorrect": false
+            }
+        ]
+    },
+    {
+        "text": "Who wrote 'Hamlet'?",
+        "marks": 2,
+        "options": [
+            {
+                "text": "Charles Dickens",
+                "isCorrect": false
+            },
+            {
+                "text": "William Shakespeare",
+                "isCorrect": true
+            },
+            {
+                "text": "Mark Twain",
+                "isCorrect": false
+            },
+            {
+                "text": "Jane Austen",
+                "isCorrect": false
+            }
+        ]
+    },
+    {
+        "text": "What is the chemical symbol for Gold?",
+        "marks": 1,
+        "options": [
+            {
+                "text": "Au",
+                "isCorrect": true
+            },
+            {
+                "text": "Ag",
+                "isCorrect": false
+            },
+            {
+                "text": "Fe",
+                "isCorrect": false
+            },
+            {
+                "text": "Pb",
+                "isCorrect": false
+            }
+        ]
+    }
+]
