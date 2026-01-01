@@ -126,7 +126,7 @@ export default async function StudentDashboard() {
                                     statusMessage = "In Progress";
                                     actionButton = (
                                         <Button asChild className="w-full animate-pulse-slow font-semibold relative overflow-hidden group">
-                                            <Link href={`/dashboard/exam/${exam.id}/play`}>
+                                            <Link href={`/exam/${exam.id}/play`}>
                                                 <span className="relative z-10 flex items-center justify-center gap-2">
                                                     Continue Exam <PlayCircle className="h-4 w-4" />
                                                 </span>

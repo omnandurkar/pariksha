@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button"
 import { auth, signOut } from "@/lib/auth"
 import { BookOpen, LogOut } from "lucide-react"
 import { ModeToggle } from "@/components/mode-toggle";
+import { DashboardFooter } from "@/components/dashboard-footer";
 
 export default async function StudentLayout({ children }) {
     const session = await auth()
@@ -37,6 +38,7 @@ export default async function StudentLayout({ children }) {
             <main className="flex-1 container mx-auto px-4 py-8">
                 {children}
             </main>
+            <DashboardFooter />
         </div>
     )
 }

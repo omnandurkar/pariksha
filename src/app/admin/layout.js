@@ -8,11 +8,13 @@ import {
     BarChart,
     LogOut,
     ShieldAlert,
-    UserPlus
+    UserPlus,
+    MessageSquare
 } from "lucide-react";
 
 import { ModeToggle } from "@/components/mode-toggle";
 import { AdminGuard } from "@/components/admin-guard";
+import { FeedbackDialog } from "@/components/feedback-dialog";
 
 export default async function AdminLayout({ children }) {
     const session = await auth();
@@ -54,8 +56,23 @@ export default async function AdminLayout({ children }) {
                             <ShieldAlert className="h-4 w-4" />
                             Access Control
                         </Link>
+                        <Link href="/admin/feedback" className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-muted transition-colors text-sm font-medium">
+                            <MessageSquare className="h-4 w-4" />
+                            Feedback (Inbox)
+                        </Link>
                     </nav>
-                    <div className="p-4 border-t">
+                    <div className="p-4 border-t space-y-2">
+                        <FeedbackDialog
+                            trigger={
+                                <button className="w-full flex items-center gap-3 px-3 py-2 rounded-md hover:bg-muted transition-colors text-sm font-medium text-left">
+                                    <MessageSquare className="h-4 w-4" />
+                                    Send Feedback
+                                </button>
+                            }
+                        />
+                        <Link href="/about" className="block px-3 py-1 text-xs text-muted-foreground hover:text-primary">
+                            Behind Pariksha
+                        </Link>
                         <form
                             action={async () => {
                                 "use server";

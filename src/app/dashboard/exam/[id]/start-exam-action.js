@@ -10,7 +10,7 @@ export async function startExam(examId, userId) {
     })
 
     if (activeAttempt) {
-        return { success: true, redirectUrl: `/dashboard/exam/${examId}/play` }
+        return { success: true, redirectUrl: `/exam/${examId}/play` }
     }
 
     // 2. Check Assignment & Limits

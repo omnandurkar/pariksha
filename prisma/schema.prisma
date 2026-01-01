@@ -19,6 +19,7 @@ model User {
   attempts      Attempt[]
   assignedExams ExamAssignment[]
   groups        GroupMember[]
+  feedbacks     Feedback[]
 }
 
 model Exam {
@@ -143,4 +144,19 @@ model AccessRequest {
   phone     String?
   status    String   @default("PENDING") // PENDING, APPROVED, REJECTED
   createdAt DateTime @default(now())
+}
+
+model Feedback {
+  id          String   @id @default(cuid())
+  text        String
+  rating      Int?
+  category    String?  // BUG, EXPERIENCE, SUGGESTION
+  isAnonymous Boolean  @default(false)
+  status      String   @default("NEW") // NEW, REVIEWED
+  
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
