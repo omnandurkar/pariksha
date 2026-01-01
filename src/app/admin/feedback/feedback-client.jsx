@@ -25,13 +25,23 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
 
 export function FeedbackClient({ initialFeedbacks }) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const [isUpdating, setIsUpdating] = useState(false);
 
-    // Filter states
+    const [selectedFeedback, setSelectedFeedback] = useState(null);
+
+    // ... existing filter logic ...
     const statusFilter = searchParams.get("status") || "ALL";
     const categoryFilter = searchParams.get("category") || "ALL";
     const ratingFilter = searchParams.get("rating") || "ALL";
@@ -52,6 +62,10 @@ export function FeedbackClient({ initialFeedbacks }) {
             await updateFeedbackStatus(id, newStatus);
             toast.success("Status updated");
             router.refresh();
+            // Also update selected feedback IF it's open
+            if (selectedFeedback && selectedFeedback.id === id) {
+                setSelectedFeedback({ ...selectedFeedback, status: newStatus });
+            }
         } catch (error) {
             toast.error("Failed to update status");
         } finally {
@@ -164,7 +178,11 @@ export function FeedbackClient({ initialFeedbacks }) {
                                 </TableRow>
                             ) : (
                                 initialFeedbacks.map((item) => (
-                                    <TableRow key={item.id} className="group">
+                                    <TableRow
+                                        key={item.id}
+                                        className="group cursor-pointer hover:bg-muted/50"
+                                        onClick={() => setSelectedFeedback(item)}
+                                    >
                                         <TableCell className="text-muted-foreground text-xs">
                                             {format(new Date(item.createdAt), "MMM d, yyyy HH:mm")}
                                         </TableCell>
@@ -206,27 +224,29 @@ export function FeedbackClient({ initialFeedbacks }) {
                                             </Badge>
                                         </TableCell>
                                         <TableCell className="text-right">
-                                            {item.status === 'NEW' ? (
-                                                <Button
-                                                    size="icon"
-                                                    variant="ghost"
-                                                    onClick={() => handleStatusUpdate(item.id, 'REVIEWED')}
-                                                    title="Mark as Received/Reviewed"
-                                                    disabled={isUpdating}
-                                                >
-                                                    <CheckCircle className="h-4 w-4 text-green-600" />
-                                                </Button>
-                                            ) : (
-                                                <Button
-                                                    size="icon"
-                                                    variant="ghost"
-                                                    onClick={() => handleStatusUpdate(item.id, 'NEW')}
-                                                    title="Mark as New"
-                                                    disabled={isUpdating}
-                                                >
-                                                    <RefreshCcw className="h-4 w-4 text-muted-foreground" />
-                                                </Button>
-                                            )}
+                                            <div onClick={(e) => e.stopPropagation()}>
+                                                {item.status === 'NEW' ? (
+                                                    <Button
+                                                        size="icon"
+                                                        variant="ghost"
+                                                        onClick={() => handleStatusUpdate(item.id, 'REVIEWED')}
+                                                        title="Mark as Received/Reviewed"
+                                                        disabled={isUpdating}
+                                                    >
+                                                        <CheckCircle className="h-4 w-4 text-green-600" />
+                                                    </Button>
+                                                ) : (
+                                                    <Button
+                                                        size="icon"
+                                                        variant="ghost"
+                                                        onClick={() => handleStatusUpdate(item.id, 'NEW')}
+                                                        title="Mark as New"
+                                                        disabled={isUpdating}
+                                                    >
+                                                        <RefreshCcw className="h-4 w-4 text-muted-foreground" />
+                                                    </Button>
+                                                )}
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 ))
@@ -235,6 +255,98 @@ export function FeedbackClient({ initialFeedbacks }) {
                     </Table>
                 </CardContent>
             </Card>
+
+            {/* Details Dialog */}
+            <Dialog open={!!selectedFeedback} onOpenChange={(open) => !open && setSelectedFeedback(null)}>
+                <DialogContent className="sm:max-w-lg">
+                    <DialogHeader>
+                        <DialogTitle className="flex items-center gap-4">
+                            <span>Feedback Details</span>
+                            {selectedFeedback?.status && (
+                                <Badge variant={selectedFeedback.status === 'NEW' ? 'default' : 'secondary'}>
+                                    {selectedFeedback.status}
+                                </Badge>
+                            )}
+                        </DialogTitle>
+                        <DialogDescription>
+                            <div className="flex flex-col gap-1 mt-2">
+                                <span className="font-medium text-foreground">
+                                    {selectedFeedback?.isAnonymous ? "Anonymous User" : selectedFeedback?.user?.name}
+                                </span>
+                                <span className="text-xs">
+                                    {!selectedFeedback?.isAnonymous && selectedFeedback?.user?.email}
+                                    <span className="mx-2"> • </span>
+                                    {selectedFeedback?.createdAt && format(new Date(selectedFeedback.createdAt), "PPP p")}
+                                </span>
+                            </div>
+                        </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="space-y-6 my-4">
+                        <div className="flex gap-4">
+                            <div className="flex-1">
+                                <h4 className="text-sm font-medium text-muted-foreground mb-1">Category</h4>
+                                <Badge variant="outline" className={
+                                    selectedFeedback?.category === 'BUG' ? "bg-red-50 text-red-700 border-red-200" :
+                                        selectedFeedback?.category === 'SUGGESTION' ? "bg-blue-50 text-blue-700 border-blue-200" :
+                                            "bg-green-50 text-green-700 border-green-200"
+                                }>
+                                    {selectedFeedback?.category}
+                                </Badge>
+                            </div>
+                            <div>
+                                <h4 className="text-sm font-medium text-muted-foreground mb-1">Rating</h4>
+                                {selectedFeedback?.rating ? (
+                                    <div className="flex gap-0.5">
+                                        {[...Array(selectedFeedback.rating)].map((_, i) => (
+                                            <Star key={i} className="h-5 w-5 fill-yellow-400 text-yellow-400" />
+                                        ))}
+                                    </div>
+                                ) : <span className="text-sm text-muted-foreground">No rating</span>}
+                            </div>
+                        </div>
+
+                        <div className="bg-muted/50 p-4 rounded-lg border">
+                            <h4 className="text-sm font-medium text-muted-foreground mb-2">Message</h4>
+                            <p className="whitespace-pre-wrap leading-relaxed">
+                                {selectedFeedback?.text}
+                            </p>
+                        </div>
+                    </div>
+
+                    <DialogFooter className="flex sm:justify-between items-center gap-2">
+                        <div className="text-xs text-muted-foreground">
+                            ID: {selectedFeedback?.id}
+                        </div>
+                        <div className="flex justify-between items-center gap-4">
+                            <Button variant="outline" onClick={() => setSelectedFeedback(null)}>
+                                Close
+                            </Button>
+                            {selectedFeedback?.status === 'NEW' && (
+                                <Button
+                                    onClick={() => handleStatusUpdate(selectedFeedback.id, 'REVIEWED')}
+                                    disabled={isUpdating}
+                                    className="gap-2"
+                                >
+                                    <CheckCircle className="h-4 w-4" />
+                                    Mark as Reviewed
+                                </Button>
+                            )}
+                            {selectedFeedback?.status === 'REVIEWED' && (
+                                <Button
+                                    variant="outline"
+                                    onClick={() => handleStatusUpdate(selectedFeedback.id, 'NEW')}
+                                    disabled={isUpdating}
+                                    className="gap-2"
+                                >
+                                    <RefreshCcw className="h-4 w-4" />
+                                    Mark as New
+                                </Button>
+                            )}
+                        </div>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
