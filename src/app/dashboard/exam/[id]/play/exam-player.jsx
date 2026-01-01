@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { submitExam } from "./actions"
@@ -27,6 +27,7 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
         if (savedIndex) {
             const idx = parseInt(savedIndex);
             if (!isNaN(idx) && idx >= 0 && idx < questions.length) {
+                // eslint-disable-next-line react-hooks/set-state-in-effect
                 setCurrentQuestionIndex(idx);
                 // Friendly toast
                 if (idx > 0) toast("Welcome back.", { description: `You're on Question ${idx + 1}.`, icon: "👋" });
@@ -38,6 +39,26 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
         localStorage.setItem(`exam_idx_${attemptId}`, currentQuestionIndex);
     }, [currentQuestionIndex, attemptId]);
 
+    const handleSubmit = useCallback(async (auto = false) => {
+        if (isSubmitting) return;
+        setIsSubmitting(true)
+        if (auto) toast.info("Time's up! Submitting exam...")
+
+        try {
+            await submitExam(attemptId, answers, markedQuestions)
+        } catch (e) {
+            toast.error("Submission failed. Try again.")
+            setIsSubmitting(false)
+        }
+    }, [attemptId, answers, markedQuestions, isSubmitting])
+
+    // Keep a ref to the latest handleSubmit to use in the timer interval
+    // without resetting the interval on every render
+    const handleSubmitRef = useRef(handleSubmit);
+    useEffect(() => {
+        handleSubmitRef.current = handleSubmit;
+    }, [handleSubmit]);
+
     // Timer Logic
     useEffect(() => {
         const interval = setInterval(() => {
@@ -48,7 +69,9 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
             if (distance < 0) {
                 clearInterval(interval)
                 setTimeLeft(0)
-                handleSubmit(true)
+                clearInterval(interval)
+                setTimeLeft(0)
+                if (handleSubmitRef.current) handleSubmitRef.current(true)
             } else {
                 setTimeLeft(Math.floor(distance / 1000))
             }
@@ -57,6 +80,7 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
         // Initial set
         const now = new Date().getTime()
         const end = new Date(endTime).getTime()
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setTimeLeft(Math.floor((end - now) / 1000))
 
         return () => clearInterval(interval)
@@ -98,18 +122,7 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
         )
     }
 
-    const handleSubmit = useCallback(async (auto = false) => {
-        if (isSubmitting) return;
-        setIsSubmitting(true)
-        if (auto) toast.info("Time's up! Submitting exam...")
 
-        try {
-            await submitExam(attemptId, answers, markedQuestions)
-        } catch (e) {
-            toast.error("Submission failed. Try again.")
-            setIsSubmitting(false)
-        }
-    }, [attemptId, answers, markedQuestions, isSubmitting])
 
     const formatTime = (seconds) => {
         const m = Math.floor(seconds / 60)

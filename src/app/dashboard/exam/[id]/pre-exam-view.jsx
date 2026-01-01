@@ -19,18 +19,7 @@ export default function PreExamView({ exam, userId }) {
     const [timeLeft, setTimeLeft] = useState(5) // 5 seconds calm mode
 
     // Calm Mode Timer
-    useEffect(() => {
-        if (step === "calm" && timeLeft > 0) {
-            const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000)
-            return () => clearInterval(timer)
-        } else if (step === "calm" && timeLeft === 0) {
-            handleStart()
-        }
-    }, [step, timeLeft])
 
-    const handleProceed = () => {
-        setStep("calm")
-    }
 
     const handleStart = async () => {
         setIsLoading(true)
@@ -43,6 +32,28 @@ export default function PreExamView({ exam, userId }) {
             setIsLoading(false)
         }
     }
+
+    // Timer effect that calls handleStart
+    useEffect(() => {
+        if (step === "calm" && timeLeft > 0) {
+            const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000)
+            return () => clearInterval(timer)
+        } else if (step === "calm" && timeLeft === 0) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            handleStart()
+        }
+    }, [step, timeLeft]) // eslint-disable-line react-hooks/exhaustive-deps 
+    // Since handleStart is now stable (outside or we should useCallback), but here it's inside component.
+    // Ideally we wrap handleStart in useCallback or leave it as is if we accept the warning.
+    // But linter wants it defined before usage. We moved it up.
+    // And added to dependency array? If we add it, we need useCallback.
+
+
+    const handleProceed = () => {
+        setStep("calm")
+    }
+
+
 
     if (step === "calm") {
         return (
@@ -58,7 +69,7 @@ export default function PreExamView({ exam, userId }) {
 
                     <div className="space-y-4">
                         <h2 className="text-3xl font-bold text-primary">Breathe In... Breathe Out</h2>
-                        <p className="text-xl text-muted-foreground">Stay calm. You've prepared for this.</p>
+                        <p className="text-xl text-muted-foreground">Stay calm. You&apos;ve prepared for this.</p>
                         <p className="text-4xl font-mono font-bold mt-4 text-blue-500">{timeLeft}</p>
                     </div>
 

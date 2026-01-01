@@ -73,24 +73,25 @@ async function getAnalytics() {
         activityData,
         scoreDistribution: scoreDist
     }
+
 }
+
+// Helper Card Component
+const StatCard = ({ title, value, icon: Icon, color }) => (
+    <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{title}</CardTitle>
+            <Icon className={`h-4 w-4 ${color}`} />
+        </CardHeader>
+        <CardContent>
+            <div className="text-2xl font-bold">{value}</div>
+        </CardContent>
+    </Card>
+);
 
 export default async function AdminDashboard() {
     const stats = await getStats();
     const analytics = await getAnalytics();
-
-    // Helper Card Component
-    const StatCard = ({ title, value, icon: Icon, color }) => (
-        <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{title}</CardTitle>
-                <Icon className={`h-4 w-4 ${color}`} />
-            </CardHeader>
-            <CardContent>
-                <div className="text-2xl font-bold">{value}</div>
-            </CardContent>
-        </Card>
-    );
 
     return (
         <div className="space-y-6">

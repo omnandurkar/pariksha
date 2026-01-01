@@ -112,7 +112,7 @@ export default async function StudentDashboard() {
                                     statusMessage = `Opens on ${start.toLocaleString()}`;
                                     actionButton = (
                                         <Button disabled className="w-full opacity-80" variant="outline">
-                                            This exam isn't available for you yet.
+                                            This exam isn&apos;t available for you yet.
                                         </Button>
                                     )
                                 } else if (isEnded) {

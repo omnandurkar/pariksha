@@ -54,7 +54,7 @@ export function EditStudentDialog({ student }) {
                 password: ""
             })
         }
-    }, [open, student])
+    }, [open, student, form])
 
     async function onSubmit(values) {
         setIsPending(true);

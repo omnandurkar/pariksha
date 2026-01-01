@@ -36,7 +36,7 @@ export default async function AttemptReviewPage({ params }) {
                     <Link href={`/admin/results/${examId}`}><ArrowLeft className="h-4 w-4" /></Link>
                 </Button>
                 <div>
-                    <h1 className="text-2xl font-bold">{attempt.user.name}'s Attempt</h1>
+                    <h1 className="text-2xl font-bold">{attempt.user.name}&apos;s Attempt</h1>
                     <p className="text-muted-foreground">{attempt.exam.title}</p>
                 </div>
             </div>

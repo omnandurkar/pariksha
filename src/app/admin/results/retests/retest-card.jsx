@@ -37,7 +37,7 @@ export function RetestRequestCard({ attempt }) {
             </CardHeader>
             <CardContent className="text-sm">
                 <div className="bg-muted p-2 rounded mb-2 italic">
-                    "{attempt.retestReason}"
+                    &quot;{attempt.retestReason}&quot;
                 </div>
                 <div className="flex justify-between text-xs text-muted-foreground">
                     <span>Score: {attempt.score}</span>
