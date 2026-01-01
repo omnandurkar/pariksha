@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Option" ADD COLUMN "endDate" DATETIME;
+ALTER TABLE "Option" ADD COLUMN "resultDate" DATETIME;
+ALTER TABLE "Option" ADD COLUMN "startDate" DATETIME;
