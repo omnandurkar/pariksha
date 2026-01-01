@@ -1,21 +1,19 @@
 import prisma from "@/lib/prisma"
 import { AddStudentForm } from "./add-student-form"
 import { BulkStudentImport } from "./bulk-import"
-import { EditStudentDialog } from "./edit-student-dialog"
-import { DeleteStudentButton } from "./delete-student-button"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table"
+import { StudentsClient } from "./students-client"
 
 export default async function StudentsPage() {
     const students = await prisma.user.findMany({
         where: { role: 'STUDENT' },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
+        select: {
+            id: true,
+            name: true,
+            email: true,
+            createdAt: true,
+            role: true
+        }
     });
 
     return (
@@ -28,39 +26,7 @@ export default async function StudentsPage() {
                 </div>
             </div>
 
-            <div className="border rounded-lg">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Email</TableHead>
-                            <TableHead>Joined</TableHead>
-                            <TableHead>Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {students.length === 0 ? (
-                            <TableRow>
-                                <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
-                                    No students found.
-                                </TableCell>
-                            </TableRow>
-                        ) : (
-                            students.map((student) => (
-                                <TableRow key={student.id}>
-                                    <TableCell>{student.name}</TableCell>
-                                    <TableCell>{student.email}</TableCell>
-                                    <TableCell>{new Date(student.createdAt).toLocaleDateString()}</TableCell>
-                                    <TableCell className="flex items-center gap-2">
-                                        <EditStudentDialog student={student} />
-                                        <DeleteStudentButton id={student.id} />
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
+            <StudentsClient initialStudents={students} />
         </div>
     )
 }

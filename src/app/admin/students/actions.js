@@ -74,3 +74,18 @@ export async function deleteStudent(id) {
         return { error: "Failed to delete student" };
     }
 }
+
+export async function bulkDeleteStudents(ids) {
+    try {
+        await prisma.user.deleteMany({
+            where: {
+                id: { in: ids }
+            }
+        });
+        revalidatePath("/admin/students");
+        return { success: true };
+    } catch (error) {
+        console.error("Bulk delete error:", error);
+        return { error: "Failed to delete selected students" };
+    }
+}

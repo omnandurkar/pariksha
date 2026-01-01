@@ -48,3 +48,18 @@ export async function createExam(data) {
     revalidatePath("/admin/exams");
     redirect("/admin/exams");
 }
+
+export async function bulkDeleteExams(ids) {
+    try {
+        await prisma.exam.deleteMany({
+            where: {
+                id: { in: ids }
+            }
+        });
+        revalidatePath("/admin/exams");
+        return { success: true };
+    } catch (error) {
+        console.error("Bulk delete exams error:", error);
+        return { error: "Failed to delete selected exams" };
+    }
+}
