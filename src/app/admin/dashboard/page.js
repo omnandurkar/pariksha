@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { Users, FileText, CheckCircle, Clock } from "lucide-react"
 import { AnalyticsCharts } from "./analytics-charts";
+import { format } from "date-fns";
 
 async function getStats() {
     const totalExams = await prisma.exam.count();
@@ -63,7 +64,7 @@ async function getAnalytics() {
     const activityData = Object.entries(activityMap)
         .sort((a, b) => a[0].localeCompare(b[0]))
         .slice(-7)
-        .map(([date, count]) => ({ date, attempts: count }));
+        .map(([date, count]) => ({ date: format(new Date(date), "dd/MM/yyyy"), attempts: count }));
 
     return {
         passFailData: [

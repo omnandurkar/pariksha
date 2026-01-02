@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts"
 import { CheckCircle2, TrendingUp, Award, Clock } from "lucide-react"
+import { format } from "date-fns"
 
 export function StudentJourneyDashboard({ attempts }) {
     // Process data for charts
@@ -11,7 +12,7 @@ export function StudentJourneyDashboard({ attempts }) {
         .filter(a => a.status === 'COMPLETED')
         .sort((a, b) => new Date(a.startTime) - new Date(b.startTime))
         .map(a => ({
-            date: new Date(a.startTime).toLocaleDateString(),
+            date: format(new Date(a.startTime), "dd/MM/yyyy"),
             score: a.score || 0,
             exam: a.exam.title
         }));
@@ -117,7 +118,7 @@ export function StudentJourneyDashboard({ attempts }) {
                                 <div key={attempt.id} className="flex items-center justify-between p-4 border rounded-lg">
                                     <div>
                                         <p className="font-semibold">{attempt.exam.title}</p>
-                                        <p className="text-sm text-muted-foreground">{new Date(attempt.startTime).toLocaleDateString()}</p>
+                                        <p className="text-sm text-muted-foreground">{format(new Date(attempt.startTime), "dd/MM/yyyy")}</p>
                                     </div>
                                     <div className="text-right">
                                         <div className="font-bold">{attempt.score || 0} Marks</div>

@@ -60,9 +60,9 @@ export default async function AttemptReviewPage({ params }) {
                                             <p className="font-medium mb-2">{q.text}</p>
                                             <div className="grid gap-2">
                                                 {q.options.map(opt => {
-                                                    let className = "p-2 rounded border text-sm flex items-center justify-between";
-
                                                     // Highlight Logic
+                                                    const isUnattempted = !answer;
+
                                                     if (opt.isCorrect) {
                                                         className += " bg-green-50 border-green-200 text-green-700";
                                                     } else if (opt.id === selectedOptionId && !opt.isCorrect) {
@@ -86,6 +86,13 @@ export default async function AttemptReviewPage({ params }) {
                                                         </div>
                                                     )
                                                 })}
+                                                {!answer && (
+                                                    <div className="mt-2">
+                                                        <Badge variant="outline" className="text-muted-foreground border-dashed">
+                                                            Unattempted
+                                                        </Badge>
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                         <div className="text-sm font-bold w-8 text-right">

@@ -23,6 +23,7 @@ import { Label } from "@/components/ui/label"
 import { Check, X, Loader2 } from "lucide-react"
 import { approveRequest, rejectRequest } from "./actions"
 import { toast } from "sonner"
+import { format } from "date-fns"
 
 export function RequestRow({ request, groups }) {
     const [selectedGroup, setSelectedGroup] = useState("none")
@@ -56,7 +57,7 @@ export function RequestRow({ request, groups }) {
 
     return (
         <TableRow>
-            <TableCell>{new Date(request.createdAt).toLocaleDateString()}</TableCell>
+            <TableCell>{format(new Date(request.createdAt), "dd/MM/yyyy")}</TableCell>
             <TableCell className="font-medium">{request.name}</TableCell>
             <TableCell>{request.email}</TableCell>
             <TableCell>{request.phone || "-"}</TableCell>

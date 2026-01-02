@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { auth, signOut } from "@/lib/auth";
+import { auth } from "@/lib/auth";
+import { SignOutButton } from "@/components/sign-out-button";
 import {
     LayoutDashboard,
     FileText,
@@ -73,17 +74,7 @@ export default async function AdminLayout({ children }) {
                         <Link href="/about" className="block px-3 py-1 text-xs text-muted-foreground hover:text-primary">
                             Behind Pariksha
                         </Link>
-                        <form
-                            action={async () => {
-                                "use server";
-                                await signOut();
-                            }}
-                        >
-                            <Button variant="ghost" className="w-full justify-start gap-3 text-red-500 hover:text-red-500 hover:bg-red-50">
-                                <LogOut className="h-4 w-4" />
-                                Sign Out
-                            </Button>
-                        </form>
+                        <SignOutButton />
                     </div>
                 </aside>
 

@@ -1,11 +1,11 @@
 "use client"
 
 import { forwardRef } from "react"
+import { format } from "date-fns"
 
 export const CertificateView = forwardRef(({ studentName, examTitle, date, score, total }, ref) => {
     // Format date consistently to avoid hydration mismatch
-    const dateObj = new Date(date);
-    const formattedDate = `${dateObj.getDate()}/${dateObj.getMonth() + 1}/${dateObj.getFullYear()}`;
+    const formattedDate = date ? format(new Date(date), "dd/MM/yyyy") : format(new Date(), "dd/MM/yyyy");
 
     return (
         <div ref={ref} className="p-10 w-[800px] h-[600px] relative flex flex-col items-center justify-center space-y-6 select-none"

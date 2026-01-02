@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { submitExam } from "./actions"
@@ -18,11 +19,18 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
     const [tabSwitches, setTabSwitches] = useState(0)
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
     const [showReviewModal, setShowReviewModal] = useState(false)
+    const router = useRouter()
 
     const currentQuestion = questions[currentQuestionIndex]
 
     // Persistence Logic
     useEffect(() => {
+        // Load tab switches
+        const savedSwitches = localStorage.getItem(`exam_tab_switches_${attemptId}`);
+        if (savedSwitches) {
+            setTabSwitches(parseInt(savedSwitches, 10) || 0);
+        }
+
         const savedIndex = localStorage.getItem(`exam_idx_${attemptId}`);
         if (savedIndex) {
             const idx = parseInt(savedIndex);
@@ -39,18 +47,29 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
         localStorage.setItem(`exam_idx_${attemptId}`, currentQuestionIndex);
     }, [currentQuestionIndex, attemptId]);
 
+    useEffect(() => {
+        localStorage.setItem(`exam_tab_switches_${attemptId}`, tabSwitches);
+    }, [tabSwitches, attemptId]);
+
     const handleSubmit = useCallback(async (auto = false) => {
         if (isSubmitting) return;
         setIsSubmitting(true)
-        if (auto) toast.info("Time's up! Submitting exam...")
+        if (auto) toast.info("submitting exam...")
 
         try {
-            await submitExam(attemptId, answers, markedQuestions)
+            const result = await submitExam(attemptId, answers, markedQuestions)
+            if (result?.success && result?.redirectUrl) {
+                router.push(result.redirectUrl)
+            } else {
+                if (result?.error) toast.error(result.error)
+                else toast.error("Submission failed. Try again.")
+                setIsSubmitting(false)
+            }
         } catch (e) {
             toast.error("Submission failed. Try again.")
             setIsSubmitting(false)
         }
-    }, [attemptId, answers, markedQuestions, isSubmitting])
+    }, [attemptId, answers, markedQuestions, isSubmitting, router])
 
     // Keep a ref to the latest handleSubmit to use in the timer interval
     // without resetting the interval on every render
@@ -58,6 +77,14 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
     useEffect(() => {
         handleSubmitRef.current = handleSubmit;
     }, [handleSubmit]);
+
+    // Auto-Submit on Tab Switches
+    useEffect(() => {
+        if (tabSwitches >= 3) {
+            toast.error("Maximum tab switches reached. Exam auto-submitted.");
+            handleSubmitRef.current(true);
+        }
+    }, [tabSwitches]);
 
     // Timer Logic
     useEffect(() => {
@@ -139,10 +166,10 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
 
     const getStatusColor = (status) => {
         switch (status) {
-            case "answered": return "bg-green-500 text-white border-green-600"
+            case "answered": return "bg-green-500 text-white border-green-600 dark:border-green-400"
             case "marked": return "bg-yellow-400 text-black border-yellow-500"
-            case "answered-marked": return "bg-purple-500 text-white border-purple-600" // Both
-            default: return "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            case "answered-marked": return "bg-purple-500 text-white border-purple-600 dark:border-purple-400" // Both
+            default: return "bg-gray-100 dark:bg-muted text-gray-700 dark:text-muted-foreground border-gray-200 dark:border-border hover:bg-gray-200 dark:hover:bg-muted/80"
         }
     }
 
@@ -150,9 +177,9 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
     const isLastQuestion = currentQuestionIndex === questions.length - 1
 
     return (
-        <div className="flex flex-col h-screen bg-gray-50/50 select-none overflow-hidden font-sans">
+        <div className="flex flex-col h-screen bg-gray-50/50 dark:bg-background select-none overflow-hidden font-sans">
             {/* 1. Smart Timer Header */}
-            <header className="bg-white border-b h-16 flex items-center justify-between px-4 md:px-8 shadow-sm z-20">
+            <header className="bg-white dark:bg-card border-b dark:border-border h-16 flex items-center justify-between px-4 md:px-8 shadow-sm z-20">
                 <div className="flex items-center gap-4">
                     <div className="flex items-center gap-2 text-green-700 bg-green-50 px-2 py-1 rounded text-xs font-medium border border-green-200">
                         <CheckCircle2 className="h-3 w-3" />
@@ -233,8 +260,8 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
                                 className={cn(
                                     "transition-all",
                                     markedQuestions.includes(currentQuestion.id)
-                                        ? "bg-yellow-50 text-yellow-700 border-yellow-200 hover:bg-yellow-100"
-                                        : "text-muted-foreground"
+                                        ? "bg-yellow-50 dark:bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 border-yellow-200 dark:border-yellow-500/50 hover:bg-yellow-100 dark:hover:bg-yellow-500/30"
+                                        : "text-muted-foreground hover:bg-muted"
                                 )}
                             >
                                 <Flag className={cn("h-4 w-4 mr-2", markedQuestions.includes(currentQuestion.id) && "fill-current")} />
@@ -242,7 +269,7 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
                             </Button>
                         </div>
 
-                        <h2 className="text-xl md:text-2xl font-medium mb-8 leading-relaxed text-gray-800">
+                        <h2 className="text-xl md:text-2xl font-medium mb-8 leading-relaxed text-gray-800 dark:text-foreground">
                             {currentQuestion.text}
                         </h2>
 
@@ -256,8 +283,8 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
                                     className={cn(
                                         "p-4 rounded-xl border-2 cursor-pointer transition-all duration-200 flex items-center gap-4 group hover:shadow-md",
                                         answers[currentQuestion.id] === option.id
-                                            ? "border-primary bg-primary/5 shadow-sm"
-                                            : "border-gray-100 bg-white hover:border-blue-200 hover:bg-blue-50/30"
+                                            ? "border-primary bg-primary/5 dark:bg-primary/20 shadow-sm"
+                                            : "border-gray-100 dark:border-border bg-white dark:bg-card hover:border-blue-200 dark:hover:border-primary/50 hover:bg-blue-50/30 dark:hover:bg-primary/10"
                                     )}
                                 >
                                     <div className={cn(
@@ -266,7 +293,7 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
                                     )}>
                                         {answers[currentQuestion.id] === option.id && <motion.div layoutId="dot" className="h-3 w-3 rounded-full bg-primary" />}
                                     </div>
-                                    <span className={cn("text-lg", answers[currentQuestion.id] === option.id ? "font-medium text-primary" : "text-gray-700")}>
+                                    <span className={cn("text-lg", answers[currentQuestion.id] === option.id ? "font-medium text-primary" : "text-gray-700 dark:text-gray-300")}>
                                         {option.text}
                                     </span>
                                 </motion.div>
@@ -307,10 +334,10 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
 
                 {/* 3. Question Palette Sidebar (Custom Drawer) */}
                 <div className={cn(
-                    "fixed inset-y-0 right-0 z-40 w-80 bg-white shadow-2xl transform transition-transform duration-300 ease-in-out border-l",
+                    "fixed inset-y-0 right-0 z-40 w-80 bg-white dark:bg-card shadow-2xl transform transition-transform duration-300 ease-in-out border-l dark:border-border",
                     isSidebarOpen ? "translate-x-0" : "translate-x-full"
                 )}>
-                    <div className="p-4 border-b flex justify-between items-center bg-gray-50/80 backdrop-blur">
+                    <div className="p-4 border-b dark:border-border flex justify-between items-center bg-gray-50/80 dark:bg-muted/50 backdrop-blur">
                         <h3 className="font-bold text-lg">Question Palette</h3>
                         <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(false)}>
                             <X className="h-5 w-5" />
@@ -336,7 +363,7 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
                                     className={cn(
                                         "h-10 w-10 rounded-lg flex items-center justify-center font-medium text-sm transition-all border-2",
                                         getStatusColor(getQuestionStatus(q.id)),
-                                        currentQuestionIndex === idx && "ring-2 ring-blue-600 ring-offset-2"
+                                        currentQuestionIndex === idx && "ring-2 ring-blue-600 ring-offset-2 dark:ring-offset-card"
                                     )}
                                 >
                                     {idx + 1}

@@ -42,5 +42,5 @@ export async function startExam(examId, userId) {
         }
     })
 
-    return { success: true, redirectUrl: `/dashboard/exam/${examId}/play` }
+    return { success: true, redirectUrl: `/exam/${examId}/play` }
 }

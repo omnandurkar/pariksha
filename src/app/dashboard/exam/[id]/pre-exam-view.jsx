@@ -16,7 +16,7 @@ export default function PreExamView({ exam, userId }) {
     const [step, setStep] = useState("instructions") // instructions, calm, starting
     const [agreed, setAgreed] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
-    const [timeLeft, setTimeLeft] = useState(5) // 5 seconds calm mode
+    const [timeLeft, setTimeLeft] = useState(10) // 10 seconds calm mode
 
     // Calm Mode Timer
 
@@ -89,21 +89,21 @@ export default function PreExamView({ exam, userId }) {
             </CardHeader>
             <CardContent className="space-y-6">
                 <div className="grid sm:grid-cols-2 gap-4">
-                    <div className="p-4 bg-blue-50/50 rounded-lg flex items-center gap-3 border border-blue-100">
-                        <div className="p-2 bg-blue-100 rounded-full">
-                            <Timer className="h-4 w-4 text-primary" />
+                    <div className="p-4 bg-blue-50/50 dark:bg-blue-500/10 rounded-lg flex items-center gap-3 border border-blue-100 dark:border-blue-500/20">
+                        <div className="p-2 bg-blue-100 dark:bg-blue-500/20 rounded-full">
+                            <Timer className="h-4 w-4 text-primary dark:text-blue-400" />
                         </div>
                         <div>
-                            <p className="text-xs text-muted-foreground uppercase font-bold">Duration</p>
+                            <p className="text-xs uppercase font-bold">Duration</p>
                             <span className="font-medium text-lg">{exam.duration} mins</span>
                         </div>
                     </div>
-                    <div className="p-4 bg-purple-50/50 rounded-lg flex items-center gap-3 border border-purple-100">
-                        <div className="p-2 bg-purple-100 rounded-full">
-                            <MousePointer2 className="h-4 w-4 text-primary" />
+                    <div className="p-4 bg-purple-50/50 dark:bg-purple-500/10 rounded-lg flex items-center gap-3 border border-purple-100 dark:border-purple-500/20">
+                        <div className="p-2 bg-purple-100 dark:bg-purple-500/20 rounded-full">
+                            <MousePointer2 className="h-4 w-4 text-primary dark:text-purple-400" />
                         </div>
                         <div>
-                            <p className="text-xs text-muted-foreground uppercase font-bold">Questions</p>
+                            <p className="text-xs  uppercase font-bold">Questions</p>
                             <span className="font-medium text-lg">{exam._count.questions}</span>
                         </div>
                     </div>
@@ -126,7 +126,7 @@ export default function PreExamView({ exam, userId }) {
                         </li>
                     </ul>
 
-                    <div className="flex items-start gap-3 p-4 bg-amber-50 text-amber-900 rounded-lg border border-amber-200">
+                    <div className="flex items-start gap-3 p-4 bg-amber-50 dark:bg-amber-500/10 text-amber-900 dark:text-amber-200 rounded-lg border border-amber-200 dark:border-amber-500/20">
                         <AlertTriangle className="h-5 w-5 shrink-0 mt-0.5" />
                         <p className="text-sm font-medium">
                             Warning: Copy-paste functionality is disabled. Multiple tab-switch violations may result in instant disqualification.
@@ -135,7 +135,7 @@ export default function PreExamView({ exam, userId }) {
                 </div>
 
                 <div className="flex items-center space-x-2 py-4 border-t">
-                    <Checkbox id="terms" checked={agreed} onCheckedChange={setAgreed} />
+                    <Checkbox id="terms" checked={agreed} onCheckedChange={setAgreed} className="dark:border-muted-foreground/50" />
                     <Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                         I have read the instructions and commit to taking this exam honestly.
                     </Label>

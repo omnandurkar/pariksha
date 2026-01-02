@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ArrowLeft, UserPlus, Trash2 } from "lucide-react"
+import { format } from "date-fns"
 import {
     Table,
     TableBody,
@@ -77,7 +78,7 @@ export default async function GroupDetailsPage({ params }) {
                                 <TableRow key={member.id}>
                                     <TableCell className="font-medium">{member.user.name}</TableCell>
                                     <TableCell>{member.user.email}</TableCell>
-                                    <TableCell>{new Date(member.joinedAt).toLocaleDateString()}</TableCell>
+                                    <TableCell>{format(new Date(member.joinedAt), "dd/MM/yyyy")}</TableCell>
                                     <TableCell className="text-right">
                                         <RemoveMemberButton memberId={member.id} />
                                     </TableCell>

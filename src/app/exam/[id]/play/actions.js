@@ -52,5 +52,5 @@ export async function submitExam(attemptId, answers, markedIds = []) {
         })
     ]);
 
-    redirect(`/dashboard/results/${attemptId}`);
+    return { success: true, redirectUrl: `/dashboard/results/${attemptId}` };
 }

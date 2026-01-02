@@ -1,9 +1,10 @@
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { auth, signOut } from "@/lib/auth"
+import { auth } from "@/lib/auth"
 import { BookOpen, LogOut } from "lucide-react"
 import { ModeToggle } from "@/components/mode-toggle";
 import { DashboardFooter } from "@/components/dashboard-footer";
+import { SignOutButton } from "@/components/sign-out-button";
 
 export default async function StudentLayout({ children }) {
     const session = await auth()
@@ -21,17 +22,7 @@ export default async function StudentLayout({ children }) {
                             {session?.user?.email}
                         </span>
                         <ModeToggle />
-                        <form
-                            action={async () => {
-                                "use server";
-                                await signOut();
-                            }}
-                        >
-                            <Button variant="ghost" size="sm">
-                                <LogOut className="h-4 w-4 mr-2" />
-                                Sign Out
-                            </Button>
-                        </form>
+                        <SignOutButton />
                     </div>
                 </div>
             </header>

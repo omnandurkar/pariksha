@@ -16,10 +16,16 @@ import {
 import { Pencil } from "lucide-react"
 import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
+import { DateTimePicker } from "@/components/ui/date-time-picker"
 
 export function EditExamDialog({ exam }) {
     const [open, setOpen] = useState(false)
     const [isPending, setIsPending] = useState(false)
+
+    // Date states
+    const [startDate, setStartDate] = useState(exam.startDate ? new Date(exam.startDate) : null)
+    const [endDate, setEndDate] = useState(exam.endDate ? new Date(exam.endDate) : null)
+    const [resultDate, setResultDate] = useState(exam.resultDate ? new Date(exam.resultDate) : null)
 
     async function onSubmit(event) {
         event.preventDefault();
@@ -71,32 +77,32 @@ export function EditExamDialog({ exam }) {
 
                     <div className="space-y-4 border p-4 rounded-md bg-muted/20">
                         <h4 className="font-medium text-sm text-foreground/80">Scheduler (Real World Timing)</h4>
-                        <div className="grid grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 gap-4">
                             <div className="space-y-2">
                                 <Label htmlFor="startDate">Start Date (Gateway Opens)</Label>
-                                <Input
+                                <DateTimePicker
                                     id="startDate"
                                     name="startDate"
-                                    type="datetime-local"
-                                    defaultValue={exam.startDate ? new Date(exam.startDate).toISOString().slice(0, 16) : ""}
+                                    date={startDate}
+                                    setDate={setStartDate}
                                 />
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="endDate">End Date (Strict Cut-off)</Label>
-                                <Input
+                                <DateTimePicker
                                     id="endDate"
                                     name="endDate"
-                                    type="datetime-local"
-                                    defaultValue={exam.endDate ? new Date(exam.endDate).toISOString().slice(0, 16) : ""}
+                                    date={endDate}
+                                    setDate={setEndDate}
                                 />
                             </div>
-                            <div className="space-y-2 col-span-2">
+                            <div className="space-y-2">
                                 <Label htmlFor="resultDate">Result Date (Results are out 🎉)</Label>
-                                <Input
+                                <DateTimePicker
                                     id="resultDate"
                                     name="resultDate"
-                                    type="datetime-local"
-                                    defaultValue={exam.resultDate ? new Date(exam.resultDate).toISOString().slice(0, 16) : ""}
+                                    date={resultDate}
+                                    setDate={setResultDate}
                                 />
                                 <p className="text-xs text-muted-foreground">If set, results will be hidden from students until this date/time.</p>
                             </div>

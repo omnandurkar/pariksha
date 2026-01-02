@@ -83,7 +83,7 @@ export function FeedbackClient({ initialFeedbacks }) {
             `"${f.text.replace(/"/g, '""')}"`, // Escape quotes
             f.user?.email || (f.isAnonymous ? "Anonymous" : "Unknown"),
             f.status,
-            new Date(f.createdAt).toISOString()
+            format(new Date(f.createdAt), "dd/MM/yyyy HH:mm")
         ]);
 
         const csvContent = [
@@ -184,7 +184,7 @@ export function FeedbackClient({ initialFeedbacks }) {
                                         onClick={() => setSelectedFeedback(item)}
                                     >
                                         <TableCell className="text-muted-foreground text-xs">
-                                            {format(new Date(item.createdAt), "MMM d, yyyy HH:mm")}
+                                            {format(new Date(item.createdAt), "dd/MM/yyyy hh:mm a")}
                                         </TableCell>
                                         <TableCell>
                                             <Badge variant="outline" className={
@@ -276,7 +276,7 @@ export function FeedbackClient({ initialFeedbacks }) {
                                 <span className="text-xs">
                                     {!selectedFeedback?.isAnonymous && selectedFeedback?.user?.email}
                                     <span className="mx-2"> • </span>
-                                    {selectedFeedback?.createdAt && format(new Date(selectedFeedback.createdAt), "PPP p")}
+                                    {selectedFeedback?.createdAt && format(new Date(selectedFeedback.createdAt), "dd/MM/yyyy hh:mm a")}
                                 </span>
                             </div>
                         </DialogDescription>

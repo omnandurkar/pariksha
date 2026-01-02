@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { BookOpen, User as UserIcon, Heart, Shield, Sparkles, MoveLeft } from "lucide-react";
 import { FeedbackDialog } from "@/components/feedback-dialog";
+import { DeveloperName } from "@/components/developer-name";
 
 export default function AboutPage() {
     return (
@@ -81,7 +82,7 @@ export default function AboutPage() {
                                 Built With Care
                             </h2>
                             <p className="text-muted-foreground leading-relaxed">
-                                Pariksha is built by <strong>Om Nandurkar</strong>, a developer who values thoughtful user experiences and reliable systems.
+                                Pariksha is built by <DeveloperName />, a developer who values thoughtful user experiences and reliable systems.
                                 This project is a reflection of a belief that educational tools should respect the time and effort of both students and teachers.
                             </p>
                             <p className="text-muted-foreground text-sm">

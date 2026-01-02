@@ -8,6 +8,7 @@ import { CheckCircle, XCircle, Clock } from "lucide-react"
 import { CertificateDownload } from "@/components/certificate-download"
 import { RequestRetestDialog } from "./retest-dialog"
 import { ConfettiCelebration } from "@/components/confetti-celebration"
+import { format } from "date-fns"
 
 export default async function ResultPage({ params }) {
     const { id } = await params
@@ -46,7 +47,7 @@ export default async function ResultPage({ params }) {
                 {resultDate ? (
                     <div className="bg-muted px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2">
                         <Clock className="h-4 w-4" />
-                        Results available on {resultDate.toLocaleDateString()} at {resultDate.toLocaleTimeString()}
+                        Results available on {format(resultDate, "dd/MM/yyyy")} at {format(resultDate, "hh:mm a")}
                     </div>
                 ) : (
                     <p className="text-sm text-muted-foreground">Results will be declared by your instructor soon.</p>

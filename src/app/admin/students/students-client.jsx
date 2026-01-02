@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Trash2, FileDown } from "lucide-react";
+import { format } from "date-fns";
 import { toast } from "sonner";
 import { bulkDeleteStudents } from "./actions";
 import {
@@ -67,6 +68,31 @@ export function StudentsClient({ initialStudents }) {
         }
     };
 
+    const handleExport = () => {
+        const headers = ["ID", "Name", "Email", "Role", "Joined Date"];
+        const rows = initialStudents.map(s => [
+            s.id,
+            s.name || "N/A",
+            s.email,
+            s.role,
+            format(new Date(s.createdAt), "dd/MM/yyyy")
+        ]);
+
+        const csvContent = [
+            headers.join(","),
+            ...rows.map(row => row.join(","))
+        ].join("\n");
+
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `pariksha_students_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     return (
         <div className="space-y-4">
             {selectedIds.length > 0 && (
@@ -84,6 +110,13 @@ export function StudentsClient({ initialStudents }) {
                     </Button>
                 </div>
             )}
+
+            <div className="flex justify-end">
+                <Button variant="outline" size="sm" onClick={handleExport} className="gap-2">
+                    <FileDown className="h-4 w-4" />
+                    Export CSV
+                </Button>
+            </div>
 
             <div className="border rounded-lg">
                 <Table>
@@ -119,7 +152,7 @@ export function StudentsClient({ initialStudents }) {
                                     </TableCell>
                                     <TableCell>{student.name}</TableCell>
                                     <TableCell>{student.email}</TableCell>
-                                    <TableCell>{new Date(student.createdAt).toLocaleDateString()}</TableCell>
+                                    <TableCell>{format(new Date(student.createdAt), "dd/MM/yyyy")}</TableCell>
                                     <TableCell className="flex items-center gap-2">
                                         <div onClick={(e) => e.stopPropagation()}>
                                             <EditStudentDialog student={student} />

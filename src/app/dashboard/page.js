@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -49,7 +50,7 @@ export default async function StudentDashboard() {
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted/30 px-3 py-1 rounded-full border">
                     <Clock className="h-4 w-4" />
-                    <span>IST: {new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' })}</span>
+                    <span>IST: {format(new Date(), "dd/MM/yyyy hh:mm a")}</span>
                 </div>
             </div>
 
@@ -94,7 +95,13 @@ export default async function StudentDashboard() {
                                 let actionButton = null;
 
                                 if (isCompleted) {
-                                    if (exam.publishResults || (exam.resultDate && new Date(exam.resultDate) <= now)) {
+                                    // Check visibility logic:
+                                    // 1. Explicitly published by admin
+                                    // 2. Scheduled result date has passed
+                                    const resultDatePassed = exam.resultDate && new Date(exam.resultDate) <= now;
+                                    const shouldShowResults = exam.publishResults || resultDatePassed;
+
+                                    if (shouldShowResults) {
                                         actionButton = (
                                             <Button asChild className="w-full bg-green-600 hover:bg-green-700 text-white shadow-sm transition-all hover:scale-[1.02]">
                                                 <Link href={`/dashboard/results/${latestAttempt.id}`}>View Results 🎉</Link>
@@ -102,21 +109,21 @@ export default async function StudentDashboard() {
                                         )
                                         statusMessage = "Results are out!";
                                     } else if (exam.resultDate) {
-                                        statusMessage = `Results expected on ${new Date(exam.resultDate).toLocaleDateString()}`;
+                                        statusMessage = `Results expected on ${format(new Date(exam.resultDate), "dd/MM/yyyy")}`;
                                         actionButton = <Button disabled className="w-full" variant="secondary">Results Pending</Button>
                                     } else {
                                         statusMessage = "Results hidden by admin";
                                         actionButton = <Button disabled className="w-full" variant="secondary">Exam Completed</Button>
                                     }
                                 } else if (isUpcoming) {
-                                    statusMessage = `Opens on ${start.toLocaleString()}`;
+                                    statusMessage = `Opens on ${format(start, "dd/MM/yyyy hh:mm a")}`;
                                     actionButton = (
                                         <Button disabled className="w-full opacity-80" variant="outline">
                                             This exam isn&apos;t available for you yet.
                                         </Button>
                                     )
                                 } else if (isEnded) {
-                                    statusMessage = `Closed on ${end.toLocaleString()}`;
+                                    statusMessage = `Closed on ${format(end, "dd/MM/yyyy hh:mm a")}`;
                                     actionButton = (
                                         <Button disabled className="w-full bg-muted text-muted-foreground hover:bg-muted">
                                             Time expired
@@ -136,7 +143,7 @@ export default async function StudentDashboard() {
                                     )
                                 } else {
                                     // Ready to Start
-                                    statusMessage = end ? `Closes on ${end.toLocaleString()}` : "Active Now";
+                                    statusMessage = end ? `Closes on ${format(end, "dd/MM/yyyy hh:mm a")}` : "Active Now";
                                     actionButton = (
                                         <Button asChild className="w-full font-semibold shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5" size="lg">
                                             <Link href={`/dashboard/exam/${exam.id}`}>

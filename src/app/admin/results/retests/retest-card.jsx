@@ -6,6 +6,7 @@ import { approveRetest, denyRetest } from "./actions"
 import { toast } from "sonner"
 import { useState } from "react"
 import { Check, X } from "lucide-react"
+import { format } from "date-fns"
 
 export function RetestRequestCard({ attempt }) {
     const [isPending, setIsPending] = useState(false)
@@ -41,7 +42,7 @@ export function RetestRequestCard({ attempt }) {
                 </div>
                 <div className="flex justify-between text-xs text-muted-foreground">
                     <span>Score: {attempt.score}</span>
-                    <span>Date: {new Date(attempt.submitTime).toLocaleDateString()}</span>
+                    <span>Date: {format(new Date(attempt.submitTime), "dd/MM/yyyy")}</span>
                 </div>
             </CardContent>
             <CardFooter className="flex gap-2 justify-end">
