@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { z } from "zod"
+import { logAdminAction } from "@/lib/audit-logger"
 
 const examSchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -29,7 +30,7 @@ export async function createExam(data) {
     const { title, description, duration, isActive } = validated.data;
 
     try {
-        await prisma.exam.create({
+        const newExam = await prisma.exam.create({
             data: {
                 title,
                 description,
@@ -40,6 +41,9 @@ export async function createExam(data) {
                 resultDate: validated.data.resultDate
             }
         });
+
+        // Log action
+        await logAdminAction('CREATE_EXAM', { title, duration: duration }, newExam.id);
     } catch (e) {
         console.error(e);
         return { error: "Failed to create exam" };
@@ -56,6 +60,7 @@ export async function bulkDeleteExams(ids) {
                 id: { in: ids }
             }
         });
+        await logAdminAction('DELETE_EXAMS', { count: ids.length, ids }, null);
         revalidatePath("/admin/exams");
         return { success: true };
     } catch (error) {

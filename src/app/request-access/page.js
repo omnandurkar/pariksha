@@ -68,6 +68,16 @@ export default function RequestAccessPage() {
                         </div>
 
                         <div className="space-y-2">
+                            <Label htmlFor="message">Message (Optional)</Label>
+                            <textarea
+                                id="message"
+                                name="message"
+                                placeholder="Tell us why you need access..."
+                                className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            />
+                        </div>
+
+                        <div className="space-y-2">
                             <Label htmlFor="password">Desired Password</Label>
                             <PasswordInput id="password" name="password" required />
                             {state?.error?.password && <p className="text-red-500 text-sm">{state.error.password}</p>}
@@ -86,6 +96,14 @@ export default function RequestAccessPage() {
                             Sign in
                         </Link>
                     </div>
+                </div>
+
+                <div className="absolute top-4 left-4 md:top-8 md:left-8">
+                    <Button asChild variant="ghost" size="sm">
+                        <Link href="/">
+                            ← Back to Home
+                        </Link>
+                    </Button>
                 </div>
             </div>
         </div>

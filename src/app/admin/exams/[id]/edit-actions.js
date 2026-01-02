@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
+import { logAdminAction } from "@/lib/audit-logger"
 
 const updateExamSchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -50,6 +51,8 @@ export async function updateExam(examId, formData) {
             where: { id: examId },
             data: data
         })
+
+        await logAdminAction('UPDATE_EXAM', { id: examId, updates: data }, examId);
 
         revalidatePath(`/admin/exams/${examId}`)
         return { success: true }

@@ -63,6 +63,8 @@ export default async function AttemptReviewPage({ params }) {
                                                     // Highlight Logic
                                                     const isUnattempted = !answer;
 
+                                                    let className = "p-3 rounded border flex items-center justify-between";
+
                                                     if (opt.isCorrect) {
                                                         className += " bg-green-50 border-green-200 text-green-700";
                                                     } else if (opt.id === selectedOptionId && !opt.isCorrect) {

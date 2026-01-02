@@ -13,7 +13,9 @@ export default function Home() {
       {/* Minimal Navbar */}
       <nav className="fixed top-0 w-full p-6 z-20 bg-white/50 backdrop-blur-sm border-b border-gray-100/50">
         <div className="max-w-6xl mx-auto flex justify-between items-center">
-          <div className="text-lg font-semibold tracking-tight text-gray-900">pariksha.</div>
+          <div className="flex items-center gap-4">
+            <div className="text-lg font-semibold tracking-tight text-gray-900">pariksha.</div>
+          </div>
           <div className="flex items-center gap-6 text-sm font-medium">
             <Link href="/auth/login" className="text-gray-500 hover:text-gray-900 transition-colors">Log in</Link>
             <Link href="/request-access" className="bg-black text-white px-4 py-2 rounded-full hover:bg-gray-800 transition-all">Get Started</Link>
@@ -78,8 +80,9 @@ export default function Home() {
 
       </main>
 
-      <footer className="py-8 text-center text-xs text-gray-400 z-10">
-        © 2026 Pariksha Inc.
+      <footer className="py-8 z-10 flex justify-center gap-6 text-xs text-gray-400">
+        <span>© 2026 Pariksha Inc.</span>
+        <Link href="/about" className="hover:text-gray-900 transition-colors">Behind Pariksha</Link>
       </footer>
     </div>
   );

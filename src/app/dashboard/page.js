@@ -24,7 +24,15 @@ async function getData(userId) {
 
     const history = await prisma.attempt.findMany({
         where: { userId },
-        include: { exam: true },
+        include: {
+            exam: {
+                include: {
+                    questions: {
+                        select: { marks: true }
+                    }
+                }
+            }
+        },
         orderBy: { startTime: 'desc' }
     });
 
@@ -33,6 +41,7 @@ async function getData(userId) {
 
 export default async function StudentDashboard() {
     const session = await auth();
+    if (!session?.user) return <div className="p-10 text-center">Please log in to continue.</div>; // Or redirect
     const { exams, history } = await getData(session.user.id);
     const firstName = session.user.name?.split(" ")[0] || "Student";
 

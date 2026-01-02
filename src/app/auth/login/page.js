@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { PasswordInput } from "@/components/ui/password-input"
 import { Label } from "@/components/ui/label"
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card"
+import Link from "next/link"
 
 export default function LoginPage() {
     const [errorMessage, dispatch, isPending] = useActionState(authenticate, undefined)
@@ -24,7 +25,12 @@ export default function LoginPage() {
                             <Input id="email" name="email" type="email" placeholder="abc@email.com" required />
                         </div>
                         <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
+                            <div className="flex items-center justify-between">
+                                <Label htmlFor="password">Password</Label>
+                                <Link href="/auth/forgot-password" className="text-sm text-muted-foreground hover:underline">
+                                    Forgot password?
+                                </Link>
+                            </div>
                             <PasswordInput id="password" name="password" required />
                         </div>
                         {errorMessage && (
@@ -35,10 +41,15 @@ export default function LoginPage() {
                         </Button>
                     </form>
                 </CardContent>
-                <CardFooter className="justify-center text-sm text-muted-foreground">
-                    Contact administrator for access.
+                <CardFooter className="flex flex-col gap-2 mt-4 text-center">
+                    <Link href="/request-access" className="text-sm underline hover:text-primary">
+                        Don&apos;t have an account? Request access
+                    </Link>
+                    <Link href="/" className="text-sm text-muted-foreground hover:text-primary pt-2">
+                        ← Back to Home
+                    </Link>
                 </CardFooter>
             </Card>
-        </div>
+        </div >
     )
 }

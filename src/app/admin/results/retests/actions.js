@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
+import { logAdminAction } from "@/lib/audit-logger"
 
 export async function approveRetest(attemptId) {
     try {
@@ -9,6 +10,9 @@ export async function approveRetest(attemptId) {
         await prisma.attempt.delete({
             where: { id: attemptId }
         })
+
+        await logAdminAction('APPROVE_RETEST', { attemptId }, attemptId);
+
         revalidatePath('/admin/results/retests')
         return { success: true }
     } catch (error) {
@@ -25,6 +29,9 @@ export async function denyRetest(attemptId) {
                 adminRemark: "Retest Request Denied."
             }
         })
+
+        await logAdminAction('DENY_RETEST', { attemptId }, attemptId);
+
         revalidatePath('/admin/results/retests')
         return { success: true }
     } catch (error) {

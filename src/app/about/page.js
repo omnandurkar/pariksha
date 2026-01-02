@@ -38,7 +38,7 @@ export default function AboutPage() {
                     </h1>
                     <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
                         Pariksha exists to make examinations feel fair, calm, and reliable.
-                        It is designed to test understanding — not patience or technology.
+                        It is designed to test understanding... not patience or technology.
                     </p>
                 </section>
 
@@ -50,7 +50,7 @@ export default function AboutPage() {
                         </div>
                         <h3 className="text-xl font-bold">Trust</h3>
                         <p className="text-muted-foreground leading-relaxed">
-                            We value integrity above all. Systems should be transparent, secure, and respectful of the user's effort.
+                            We value integrity above all. Systems should be transparent, secure, and respectful of the user&apos;s effort.
                         </p>
                     </div>
                     <div className="space-y-4 p-6 rounded-2xl bg-secondary/20 hover:bg-secondary/40 transition-colors">

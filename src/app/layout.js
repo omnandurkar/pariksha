@@ -13,7 +13,10 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Pariksha - Exam Platform",
+  title: {
+    template: '%s | Pariksha',
+    default: 'Pariksha',
+  },
   description: "Secure and Scalable Examination Platform",
 };
 

@@ -8,23 +8,33 @@ import { format } from "date-fns"
 
 export function StudentJourneyDashboard({ attempts }) {
     // Process data for charts
-    const chartData = attempts
+    const processedAttempts = attempts
         .filter(a => a.status === 'COMPLETED')
+        .map(a => {
+            const questions = a.exam?.questions || [];
+            const totalMarks = questions.reduce((sum, q) => sum + (q.marks || 1), 0) || 1;
+            const percentage = Math.round(((a.score || 0) / totalMarks) * 100);
+            return { ...a, percentage, totalMarks };
+        });
+
+    const totalExams = processedAttempts.length;
+    const avgPercentage = totalExams > 0
+        ? Math.round(processedAttempts.reduce((acc, curr) => acc + curr.percentage, 0) / totalExams)
+        : 0;
+
+    const chartData = processedAttempts
         .sort((a, b) => new Date(a.startTime) - new Date(b.startTime))
         .map(a => ({
             date: format(new Date(a.startTime), "dd/MM/yyyy"),
-            score: a.score || 0,
+            score: a.percentage,
+            rawScore: a.score,
+            total: a.totalMarks,
             exam: a.exam.title
         }));
 
-    const totalExams = attempts.filter(a => a.status === 'COMPLETED').length;
-    const avgScore = totalExams > 0
-        ? Math.round(attempts.reduce((acc, curr) => acc + (curr.score || 0), 0) / totalExams)
-        : 0;
-
-    // Improvement calculation (last vs average of rest)
-    const recentScore = chartData.length > 0 ? chartData[chartData.length - 1].score : 0;
-    const improvement = recentScore - avgScore;
+    // Improvement
+    const recentPercentage = chartData.length > 0 ? chartData[chartData.length - 1].score : 0;
+    const improvement = recentPercentage - avgPercentage;
 
     return (
         <Tabs defaultValue="overview" className="space-y-4">
@@ -50,7 +60,7 @@ export function StudentJourneyDashboard({ attempts }) {
                             <Award className="h-4 w-4 text-blue-500" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{avgScore}</div>
+                            <div className="text-2xl font-bold">{avgPercentage}%</div>
                         </CardContent>
                     </Card>
                     <Card>
@@ -59,9 +69,9 @@ export function StudentJourneyDashboard({ attempts }) {
                             <TrendingUp className="h-4 w-4 text-purple-500" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">{recentScore}</div>
+                            <div className="text-2xl font-bold">{recentPercentage}%</div>
                             <p className="text-xs text-muted-foreground">
-                                {improvement > 0 ? `+${improvement} above average` : `${improvement} from average`}
+                                {improvement > 0 ? `+${improvement}% above average` : `${improvement}% from average`}
                             </p>
                         </CardContent>
                     </Card>
@@ -93,6 +103,7 @@ export function StudentJourneyDashboard({ attempts }) {
                                         <Tooltip
                                             contentStyle={{ borderRadius: '8px' }}
                                             cursor={{ stroke: '#9ca3af', strokeWidth: 1, strokeDasharray: '4 4' }}
+                                            formatter={(value) => [`${value}%`, 'Score']}
                                         />
                                         <Line type="monotone" dataKey="score" stroke="#2563eb" strokeWidth={3} activeDot={{ r: 6 }} />
                                     </LineChart>

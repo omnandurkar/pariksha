@@ -10,6 +10,7 @@ const requestSchema = z.object({
     email: z.string().email("Invalid email"),
     password: z.string().min(6, "Password must be at least 6 characters"),
     phone: z.string().optional(),
+    message: z.string().optional(),
 })
 
 export async function submitAccessRequest(prevState, formData) {
@@ -18,13 +19,14 @@ export async function submitAccessRequest(prevState, formData) {
         email: formData.get('email'),
         password: formData.get('password'),
         phone: formData.get('phone'),
+        message: formData.get('message'),
     })
 
     if (!validatedFields.success) {
         return { error: validatedFields.error.flatten().fieldErrors }
     }
 
-    const { email, password, name, phone } = validatedFields.data
+    const { email, password, name, phone, message } = validatedFields.data
 
     try {
         // Check existing user
@@ -42,7 +44,8 @@ export async function submitAccessRequest(prevState, formData) {
                 name,
                 email,
                 password: hashedPassword,
-                phone
+                phone,
+                message
             }
         })
 

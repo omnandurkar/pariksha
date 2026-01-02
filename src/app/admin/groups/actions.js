@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
+import { logAdminAction } from "@/lib/audit-logger"
 
 const createGroupSchema = z.object({
     name: z.string().min(1, "Name is required"),
@@ -20,9 +21,12 @@ export async function createGroup(formData) {
     }
 
     try {
-        await prisma.group.create({
+        const newGroup = await prisma.group.create({
             data: validatedFields.data
         })
+
+        await logAdminAction('CREATE_GROUP', validatedFields.data, newGroup.id);
+
         revalidatePath('/admin/groups')
         return { success: true }
     } catch (error) {
@@ -33,6 +37,9 @@ export async function createGroup(formData) {
 export async function deleteGroup(groupId) {
     try {
         await prisma.group.delete({ where: { id: groupId } })
+
+        await logAdminAction('DELETE_GROUP', { id: groupId }, groupId);
+
         revalidatePath('/admin/groups')
         return { success: true }
     } catch (error) {

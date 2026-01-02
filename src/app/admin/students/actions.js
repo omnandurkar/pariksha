@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma"
 import bcrypt from "bcryptjs"
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
+import { logAdminAction } from "@/lib/audit-logger"
 
 const studentSchema = z.object({
     name: z.string().min(1, "Name is required"),
@@ -26,7 +27,7 @@ export async function addStudent(data) {
 
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        await prisma.user.create({
+        const newUser = await prisma.user.create({
             data: {
                 name,
                 email,
@@ -34,6 +35,9 @@ export async function addStudent(data) {
                 role: 'STUDENT'
             }
         });
+
+        await logAdminAction('CREATE_STUDENT', { name, email }, newUser.id);
+
         revalidatePath("/admin/students");
         return { success: true };
     } catch (error) {
@@ -58,6 +62,9 @@ export async function updateStudent(id, data) {
             where: { id },
             data: updateData
         });
+
+        await logAdminAction('UPDATE_STUDENT', { updates: updateData }, id);
+
         revalidatePath("/admin/students");
         return { success: true };
     } catch (error) {
@@ -68,6 +75,9 @@ export async function updateStudent(id, data) {
 export async function deleteStudent(id) {
     try {
         await prisma.user.delete({ where: { id } });
+
+        await logAdminAction('DELETE_STUDENT', { id }, id);
+
         revalidatePath("/admin/students");
         return { success: true };
     } catch (error) {
@@ -82,6 +92,9 @@ export async function bulkDeleteStudents(ids) {
                 id: { in: ids }
             }
         });
+
+        await logAdminAction('DELETE_STUDENTS_BULK', { count: ids.length, ids }, null);
+
         revalidatePath("/admin/students");
         return { success: true };
     } catch (error) {

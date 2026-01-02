@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
+import { logAdminAction } from "@/lib/audit-logger"
 
 export async function approveRequest(requestId, groupId = null) {
     try {
@@ -34,6 +35,8 @@ export async function approveRequest(requestId, groupId = null) {
         // Delete Request
         await prisma.accessRequest.delete({ where: { id: requestId } })
 
+        await logAdminAction('APPROVE_ACCESS_REQUEST', { email: request.email, name: request.name }, requestId);
+
         revalidatePath("/admin/access-requests")
         revalidatePath("/admin/students")
         return { success: true }
@@ -46,6 +49,9 @@ export async function approveRequest(requestId, groupId = null) {
 export async function rejectRequest(requestId) {
     try {
         await prisma.accessRequest.delete({ where: { id: requestId } })
+
+        await logAdminAction('REJECT_ACCESS_REQUEST', { id: requestId }, requestId);
+
         revalidatePath("/admin/access-requests")
         return { success: true }
     } catch (error) {

@@ -4,13 +4,27 @@ import { auth } from "@/lib/auth"
 import { Users, FileText, CheckCircle, Clock } from "lucide-react"
 import { AnalyticsCharts } from "./analytics-charts";
 import { format } from "date-fns";
+import { AdminHistorySheet } from "./admin-history-sheet";
 
 async function getStats() {
     const totalExams = await prisma.exam.count();
     const totalStudents = await prisma.user.count({ where: { role: 'STUDENT' } });
     const totalAttempts = await prisma.attempt.count();
+    const pendingRequests = await prisma.accessRequest.count({ where: { status: 'PENDING' } });
 
-    return { totalExams, totalStudents, totalAttempts };
+    return { totalExams, totalStudents, totalAttempts, pendingRequests };
+}
+
+async function getAuditLogs() {
+    try {
+        return await prisma.auditLog.findMany({
+            take: 20,
+            orderBy: { createdAt: 'desc' },
+            include: { admin: { select: { name: true, email: true } } }
+        });
+    } catch (e) {
+        return [];
+    }
 }
 
 // Helper to get analytics data
@@ -28,15 +42,6 @@ async function getAnalytics() {
     const examStats = {}; // { examId: { title, totalScore, count, max } }
 
     attempts.forEach(a => {
-        const passingScore = (a.exam.passingPercentage / 100) * (a.exam.questions ? a.exam.questions.length : 0); // Warning: we need total marks, not question count.
-        // Wait, total marks is complex to calc without fetching all questions.
-        // Let's assume passed if score >= (passing % of total possible).
-        // Since we didn't store total marks in Attempt, we need to fetch it or approximation.
-        // For visual simplicity, let's just use raw pass/fail IF we stored it? We didn't.
-        // Let's use a simpler metric for chart 1: "Completed vs Started"? No, User wanted Pass/Fail.
-        // OK, let's stick to simple "Activity" and "Score Distribution".
-        // Attempt model has "score" and "examId".
-
         if (!examStats[a.examId]) {
             examStats[a.examId] = { title: a.exam.title, scores: [] };
         }
@@ -93,16 +98,20 @@ const StatCard = ({ title, value, icon: Icon, color }) => (
 export default async function AdminDashboard() {
     const stats = await getStats();
     const analytics = await getAnalytics();
+    const logs = await getAuditLogs();
 
     return (
         <div className="space-y-6">
-            <h1 className="text-3xl font-bold tracking-tight">Dashboard Overview</h1>
+            <div className="flex items-center justify-between">
+                <h1 className="text-3xl font-bold tracking-tight">Dashboard Overview</h1>
+                <AdminHistorySheet logs={logs} />
+            </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <StatCard title="Total Students" value={stats.totalStudents} icon={Users} color="text-blue-600" />
                 <StatCard title="Active Exams" value={stats.totalExams} icon={FileText} color="text-green-600" />
                 <StatCard title="Total Attempts" value={stats.totalAttempts} icon={CheckCircle} color="text-purple-600" />
-                <StatCard title="Pending Requests" value={0} icon={Clock} color="text-orange-600" />
+                <StatCard title="Pending Requests" value={stats.pendingRequests} icon={Clock} color="text-orange-600" />
             </div>
 
             <div className="mt-8">
