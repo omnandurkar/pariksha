@@ -39,6 +39,10 @@ async function getData(userId) {
     return { exams, history };
 }
 
+export const metadata = {
+    title: "Dashboard",
+}
+
 export default async function StudentDashboard() {
     const session = await auth();
     if (!session?.user) return <div className="p-10 text-center">Please log in to continue.</div>; // Or redirect
@@ -118,7 +122,7 @@ export default async function StudentDashboard() {
                                         )
                                         statusMessage = "Results are out!";
                                     } else if (exam.resultDate) {
-                                        statusMessage = `Results expected on ${format(new Date(exam.resultDate), "dd/MM/yyyy")}`;
+                                        statusMessage = `Results expected on ${format(new Date(exam.resultDate), "dd/MM/yyyy hh:mm a")}`; // if you want to show time else remove the hh:mm a
                                         actionButton = <Button disabled className="w-full" variant="secondary">Results Pending</Button>
                                     } else {
                                         statusMessage = "Results hidden by admin";

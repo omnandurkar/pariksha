@@ -33,7 +33,7 @@ export default async function ResultPage({ params }) {
     // Result Visibility Logic
     const now = new Date();
     const resultDate = attempt.exam.resultDate ? new Date(attempt.exam.resultDate) : null;
-    const isResultPublished = attempt.exam.publishResults && (!resultDate || resultDate <= now);
+    const isResultPublished = attempt.exam.publishResults || (resultDate && resultDate <= now);
 
     if (!isResultPublished) {
         return (

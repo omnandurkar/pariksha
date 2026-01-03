@@ -61,7 +61,7 @@ export default async function ManageExamPage({ params }) {
                         <span>{exam.questions.length} Questions</span>
                     </div>
                 </div>
-                <PublishResultsToggle examId={exam.id} initialStatus={exam.publishResults} />
+                <PublishResultsToggle examId={exam.id} initialStatus={exam.publishResults} resultDate={exam.resultDate} />
             </div>
 
             <div className="grid gap-8 md:grid-cols-[2fr_1fr]">

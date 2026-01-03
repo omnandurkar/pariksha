@@ -1,0 +1,55 @@
+Section,ID,Test Case Title,Preconditions,Test Steps,Expected Results,Status
+Authentication,AUTH_001,Admin Login - Valid Credentials,Admin account exists,"1. Navigate to /auth/login
+2. Enter valid admin email and password.
+3. Click Login.","Redirected to /admin/dashboard. URL changes to /admin/dashboard.",
+Authentication,AUTH_002,Student Login - Valid Credentials,Student account exists,"1. Navigate to /auth/login.
+2. Enter valid student email and password.
+3. Click Login.","Redirected to /dashboard. URL changes to /dashboard.",
+Authentication,AUTH_003,Login - Invalid Password,Account exists,"1. Enter valid email.
+2. Enter incorrect password.
+3. Click Login.","Error message ""Invalid credentials"" displayed. User remains on login page.",
+Authentication,AUTH_004,Request Access - Submission,None,"1. Click ""Request Access"" on login page.
+2. Fill Name, Email, Password, Message.
+3. Click Submit.","Success message displayed. User redirected to login. Request appears in Admin > Access Requests.",
+Admin Dashboard,ADM_001,Dashboard Stats Loading,Logged in as Admin,"1. Navigate to /admin/dashboard.
+2. Observe Stat Cards (Students, Exams, Attempts).","Stats are visible and non-zero (if data exists). Charts load correctly.",
+Admin Dashboard,ADM_002,Audit Log History,Admin performed actions,"1. Click History (Clock icon) in header.
+2. Verify recent actions are listed.","Side sheet opens. Recent actions (e.g., Login, Exam Create) are listed with timestamps.",
+Exam Management,XM_001,Create Exam - All Fields,Logged in as Admin,"1. Go to /admin/exams.
+2. Click Create Exam.
+3. Enter Title, Duration (60), Pass% (40).
+4. Click Create.","Exam created in ""Draft"" state. Redirected to Exam Details page.",
+Exam Management,XM_002,Add Question,Exam exists,"1. In Exam Details, scroll to Questions.
+2. Enter Question Text, Marks.
+3. Add Options (mark one as Correct).
+4. Click Add Question.","Question appears in the list below. Marks updated.",
+Exam Management,XM_003,Assign Students,Exam exists, Students exist,"1. Click ""Select Students"".
+2. Check boxes for specific students.
+3. Save.","Selected students appear in ""Assigned Students"" list.",
+Exam Management,XM_004,Activate Exam,Exam has questions,"1. Click Edit icon.
+2. Toggle ""Active"" to ON.
+3. Save.","Exam status badge changes to ""Active"". Visible on Student Dashboard.",
+Exam Management,XM_005,Publish Results Toggle,Exam exists,"1. In Exam Details, toggle ""Declare Results"".","Toast ""Results Published"" appears. Toggle state persists.",
+Student Dashboard,STU_001,View Active Exams,Logged in as Student,"1. Navigate to /dashboard.
+2. Check ""Active Exams"" tab.","Assigned active exams are listed. Cards show ""Start Exam"" or ""Open on [Date]"".",
+Exam Player,PLY_001,Start Exam,Exam is Active,"1. Click ""Start Exam"".
+2. Click ""I am ready to begin"".","Exam Player loads. First question displayed. Timer starts.",
+Exam Player,PLY_002,Answer Selection,Exam started,"1. Select an option for Q1.
+2. Click Next.","Selection persists. Q2 is displayed.",
+Exam Player,PLY_003,Mark for Review,Exam started,"1. Click ""Mark for Review"" on current question.","Question number in palette turns purple/distinct color.",
+Exam Player,PLY_004,Tab Switch Warning,Exam started,"1. Switch browser tab or minimize window.
+2. Return to exam.","Warning modal appears (""Tab switch detected""). Count increases.",
+Exam Player,PLY_005,Auto Submit on Tab Limit,Exam started,"1. Trigger tab switch limit (e.g. 3 times).","Exam auto-submits. Redirected to completion screen.",
+Exam Player,PLY_006,Manual Submit,Exam started,"1. Click ""Finish Exam"".
+2. Confirm submission.","Exam submitted. Redirected to Dashboard. Status ""Completed"".",
+Results,RES_001,View Results (Published),Result published by Admin,"1. Student Dashboard.
+2. Locate completed exam.
+3. Click ""View Results"".","Detailed scorecard opens. Marks, Percentage, and Pass/Fail status shown.",
+Results,RES_002,Results Hidden,Result NOT published,"1. Student Dashboard.
+2. Locate completed exam.","Button says ""Results hidden by admin"". Unable to view scorecard.",
+Admin Results,RES_ADM_001,View Student Attempt,Student completed exam,"1. Admin > Results > [Exam Name].
+2. Find student in list.","Student score, status (Pass/Fail) displayed correctly.",
+Admin Results,RES_ADM_002,Export CSV,Attempts exist,"1. Admin > Results > [Exam Name].
+2. Click ""Export CSV"".","CSV file downloaded with columns: Name, Email, Score, Status, Date.",
+System,SYS_001,Responsive Design,Mobile Device,"1. Open App on Mobile View (DevTools).
+2. Check Navbar, Exam Player, Dashboard.","Layout adjusts. No horizontal scroll on essential elements. Buttons clickable.",

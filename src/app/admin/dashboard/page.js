@@ -95,6 +95,10 @@ const StatCard = ({ title, value, icon: Icon, color }) => (
     </Card>
 );
 
+export const metadata = {
+    title: "Admin Dashboard",
+}
+
 export default async function AdminDashboard() {
     const stats = await getStats();
     const analytics = await getAnalytics();

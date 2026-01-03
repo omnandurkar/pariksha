@@ -4,6 +4,10 @@ import { BookOpen, User as UserIcon, Heart, Shield, Sparkles, MoveLeft } from "l
 import { FeedbackDialog } from "@/components/feedback-dialog";
 import { DeveloperName } from "@/components/developer-name";
 
+export const metadata = {
+    title: "Behind Pariksha",
+}
+
 export default function AboutPage() {
     return (
         <div className="min-h-screen bg-background text-foreground font-sans selection:bg-primary/20">
