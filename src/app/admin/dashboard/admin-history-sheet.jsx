@@ -80,7 +80,7 @@ export function AdminHistorySheet({ logs }) {
                     </SheetDescription>
                 </SheetHeader>
                 <div className="mt-6">
-                    <ScrollArea className="h-[calc(100vh-10rem)] pr-4">
+                    <ScrollArea className="h-[calc(100dvh-10rem)] pr-4">
                         <div className="space-y-6">
                             {logs.length === 0 ? (
                                 <p className="text-sm text-muted-foreground text-center">No history recorded yet.</p>

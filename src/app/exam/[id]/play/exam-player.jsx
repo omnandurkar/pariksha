@@ -206,7 +206,7 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
     const isLastQuestion = currentQuestionIndex === questions.length - 1
 
     return (
-        <div className="flex flex-col h-screen bg-gray-50/50 dark:bg-background select-none overflow-hidden font-sans">
+        <div className="flex flex-col h-dvh bg-gray-50/50 dark:bg-background select-none overflow-hidden font-sans">
             {/* 1. Smart Timer Header */}
             <header className="bg-white dark:bg-card border-b dark:border-border h-16 flex items-center justify-between px-4 md:px-8 shadow-sm z-20">
                 <div className="flex items-center gap-4">
