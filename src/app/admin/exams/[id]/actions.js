@@ -61,3 +61,40 @@ export async function deleteQuestion(questionId, examId) {
         return { error: "Failed to delete question" };
     }
 }
+
+const bulkQuestionSchema = z.array(questionSchema.omit({ examId: true }));
+
+export async function bulkCreateQuestions(examId, questions) {
+    const validated = bulkQuestionSchema.safeParse(questions);
+
+    if (!validated.success) {
+        console.error("Validation error:", validated.error);
+        return { error: "Invalid data format. Please check your CSV." };
+    }
+
+    try {
+        await prisma.$transaction(
+            validated.data.map((q) =>
+                prisma.question.create({
+                    data: {
+                        examId,
+                        text: q.text,
+                        marks: q.marks,
+                        options: {
+                            create: q.options.map(opt => ({
+                                text: opt.text,
+                                isCorrect: opt.isCorrect
+                            }))
+                        }
+                    }
+                })
+            )
+        );
+
+        revalidatePath(`/admin/exams/${examId}`);
+        return { success: true, count: questions.length };
+    } catch (error) {
+        console.error("Bulk create error:", error);
+        return { error: "Failed to import questions. strict database rules might be violated." };
+    }
+}

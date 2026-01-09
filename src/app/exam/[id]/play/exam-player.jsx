@@ -328,6 +328,26 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
                                 </motion.div>
                             ))}
                         </div>
+
+                        {/* Clear Selection Button */}
+                        {answers[currentQuestion.id] && (
+                            <div className="mt-4 flex justify-end">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => {
+                                        setAnswers(prev => {
+                                            const newAnswers = { ...prev };
+                                            delete newAnswers[currentQuestion.id];
+                                            return newAnswers;
+                                        });
+                                    }}
+                                    className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 h-8 text-xs"
+                                >
+                                    <X className="h-3 w-3 mr-1" /> Clear Selection
+                                </Button>
+                            </div>
+                        )}
                     </Card>
 
                     {/* Bottom Navigation */}

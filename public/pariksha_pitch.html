@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pariksha - The Future of Examination</title>
+    <style>
+        /* Modern Reset & Base Styles */
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #0f172a;
+            --accent: #3b82f6;
+            --background: #ffffff;
+            --surface: #f8fafc;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --success: #22c55e;
+            --warning: #eab308;
+            --font-main: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            color: var(--text-main);
+            line-height: 1.6;
+            background-color: var(--surface);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        h1, h2, h3, h4 {
+            font-weight: 700;
+            line-height: 1.2;
+            color: var(--secondary);
+        }
+
+        p {
+            margin-bottom: 1.5rem;
+            color: var(--text-muted);
+        }
+
+        /* Utility */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section {
+            padding: 5rem 0;
+        }
+
+        .text-center { text-align: center; }
+        .text-primary { color: var(--primary); }
+        
+        .btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 8rem 0 6rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            max-width: 600px;
+            margin: 0 auto 2.5rem;
+        }
+
+        /* Features Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-icon {
+            width: 3rem;
+            height: 3rem;
+            background: #eff6ff;
+            color: var(--primary);
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+
+        /* Problem/Solution Split */
+        .split-section {
+            background: white;
+        }
+        
+        .split-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .split-grid { grid-template-columns: 1fr; }
+        }
+
+        /* Stats/Tech */
+        .stats {
+            background: var(--secondary);
+            color: white;
+            padding: 4rem 0;
+        }
+
+        .stat-item h3 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-item p {
+            color: #94a3b8;
+            margin: 0;
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid #e2e8f0;
+            padding: 3rem 0;
+            background: white;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+        .tag-blue { background: #dbeafe; color: var(--primary); }
+
+    </style>
+</head>
+<body>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <div class="container text-center">
+            <span class="tag tag-blue">Introducing Pariksha</span>
+            <h1>Exams, Made Human.</h1>
+            <p>The intelligent examination platform that prioritizes student well-being while delivering enterprise-grade security and analytics.</p>
+            <a href="#contact" class="btn btn-primary">Invest in the Future</a>
+        </div>
+    </header>
+
+    <!-- The Problem -->
+    <section class="section">
+        <div class="container">
+            <div class="text-center" style="max-width: 700px; margin: 0 auto 4rem;">
+                <h2>The Broken Examination System</h2>
+                <p>Traditional and current digital exam solutions are failing both institutions and students.</p>
+            </div>
+            <div class="grid">
+                <div class="card">
+                    <div class="card-icon">😰</div>
+                    <h3>High Stress</h3>
+                    <p>Clunky interfaces and fear-inducing environments negatively impact student performance.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🛡️</div>
+                    <h3>Security Flaws</h3>
+                    <p>Weak anti-cheating measures lead to academic dishonesty and questioned integrity.</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📊</div>
+                    <h3>Data Blackbox</h3>
+                    <p>Administrators lack real-time insights into student performance and exam health.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- The Solution -->
+    <section class="section split-section">
+        <div class="container">
+            <div class="split-grid">
+                <div>
+                    <span class="tag tag-blue">The Pariksha Solution</span>
+                    <h2>A Platform Built for Humans</h2>
+                    <p>Pariksha bridges the gap between rigorous assessment and user-centric design.</p>
+                    
+                    <div style="margin-top: 2rem;">
+                        <h4 style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="color:var(--success)">✓</span> Calm Mode
+                        </h4>
+                        <p>Pre-exam breathing exercises and a distraction-free interface to maximize focus.</p>
+
+                        <h4 style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="color:var(--success)">✓</span> Smart Security
+                        </h4>
+                        <p>Intelligent tab-switch monitoring and copy-paste protection without invasive surveillance.</p>
+
+                        <h4 style="margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <span style="color:var(--success)">✓</span> Instant Feedback
+                        </h4>
+                        <p>Real-time results and detailed performance analytics for continuous improvement.</p>
+                    </div>
+                </div>
+                <div style="background: #f1f5f9; padding: 2rem; border-radius: 1rem; text-align: center;">
+                    <!-- Placeholder representing UI -->
+                    <div style="background: white; border-radius: 0.5rem; padding: 1rem; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);">
+                        <div style="height: 10px; width: 60%; background: #e2e8f0; margin-bottom: 1rem; border-radius: 4px;"></div>
+                        <div style="height: 200px; background: #f8fafc; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #94a3b8;">
+                            Intuitive, Modern UI
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tech Stack -->
+    <section class="section stats">
+        <div class="container">
+            <div class="text-center" style="margin-bottom: 3rem;">
+                <h2 style="color: white">Built for Scale & Speed</h2>
+            </div>
+            <div class="grid text-center">
+                <div class="stat-item">
+                    <h3>Next.js</h3>
+                    <p>High Performance React Framework</p>
+                </div>
+                <div class="stat-item">
+                    <h3>Secure</h3>
+                    <p>Role-Based Authentication</p>
+                </div>
+                <div class="stat-item">
+                    <h3>Responsive</h3>
+                    <p>Mobile-First Architecture</p>
+                </div>
+                <div class="stat-item">
+                    <h3>Analytics</h3>
+                    <p>Real-time Data Visualization</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Features List -->
+    <section class="section">
+        <div class="container">
+            <h2 class="text-center" style="margin-bottom: 3rem;">Complete Feature Suite</h2>
+            <div class="grid">
+                <div class="card">
+                    <h4>Admin Dashboard</h4>
+                    <p>Create exams, manage students, approval workflows, and view deep analytics.</p>
+                </div>
+                <div class="card">
+                    <h4>Student Journey</h4>
+                    <p>Track progress over time, view history logs, and access improvement insights.</p>
+                </div>
+                <div class="card">
+                    <h4>Audit Logging</h4>
+                    <p>Every action is recorded. Full transparency for administrative changes.</p>
+                </div>
+                <div class="card">
+                    <h4>Automated Grading</h4>
+                    <p>Save hundreds of hours with instant, accurate, and fair automated grading.</p>
+                </div>
+                <div class="card">
+                    <h4>Access Control</h4>
+                    <p>Strict access request systems ensure only authorized students take exams.</p>
+                </div>
+                <div class="card">
+                    <h4>Feedback Loop</h4>
+                    <p>Built-in feedback mechanisms for constant platform iteration.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section id="contact" class="section text-center" style="background: white;">
+        <div class="container">
+            <h2 style="margin-bottom: 1rem;">Ready to Transform Assessment?</h2>
+            <p style="margin-bottom: 2rem;">Join us in building the future of education.</p>
+            <div style="display: flex; gap: 1rem; justify-content: center;">
+                <a href="#" class="btn btn-primary">Schedule Demo</a>
+                <a href="mailto:contact@pariksha.com" class="btn" style="background: #f1f5f9; color: var(--text-main);">Contact Sales</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container text-center">
+            <p style="margin-bottom: 0.5rem; font-weight: 600;">Pariksha Platform</p>
+            <p style="font-size: 0.875rem;">&copy; 2026 Pariksha. All rights reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>

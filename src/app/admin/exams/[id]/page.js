@@ -3,12 +3,10 @@ import { notFound } from "next/navigation"
 import { AddQuestionForm } from "./add-question-form"
 import { QuestionList } from "./question-list"
 import { BulkImport } from "./bulk-import"
-import { BulkAssignStudents } from "./bulk-assign"
-import { SelectStudentsDialog } from "./select-students-dialog"
 import { AssignedStudentsList } from "./assigned-list"
 import { PublishResultsToggle } from "./publish-toggle"
 import { EditExamDialog } from "./edit-exam-dialog"
-import { AssignGroupDialog } from "./assign-group-dialog"
+import { AssignmentsDialog } from "./assignments-dialog"
 import { Badge } from "@/components/ui/badge"
 
 export default async function ManageExamPage({ params }) {
@@ -75,9 +73,7 @@ export default async function ManageExamPage({ params }) {
                         <BulkImport examId={exam.id} />
                         <div className="pt-4 border-t">
                             <h3 className="font-semibold mb-2">Assignments</h3>
-                            <BulkAssignStudents examId={exam.id} />
-                            <SelectStudentsDialog examId={exam.id} availableStudents={availableStudents} />
-                            <AssignGroupDialog examId={exam.id} groups={groups} />
+                            <AssignmentsDialog examId={exam.id} availableStudents={availableStudents} groups={groups} />
                             <div className="mt-4">
                                 <h4 className="text-sm font-medium mb-2 text-muted-foreground">Assigned Students</h4>
                                 <AssignedStudentsList assignments={exam.assignments} examId={exam.id} />

@@ -4,14 +4,18 @@ import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { togglePublishResults } from "./result-actions"
 import { toast } from "sonner"
-import { useState } from "react"
-
+import { useState, useEffect } from "react"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { Info } from "lucide-react"
 
 export function PublishResultsToggle({ examId, initialStatus, resultDate }) {
     const [published, setPublished] = useState(initialStatus);
     const [isPending, setIsPending] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     const handleToggle = async (checked) => {
         setPublished(checked);
@@ -46,7 +50,7 @@ export function PublishResultsToggle({ examId, initialStatus, resultDate }) {
                         </Tooltip>
                     </TooltipProvider>
                 </div>
-                {resultDate && (
+                {mounted && resultDate && (
                     <span className="text-[10px] text-muted-foreground">
                         {new Date(resultDate) <= new Date() ? "(Schedule has passed - Results are visible)" : `(Scheduled for ${new Date(resultDate).toLocaleDateString()})`}
                     </span>

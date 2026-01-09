@@ -62,8 +62,13 @@ export default async function ResultPage({ params }) {
 
     // Calculations
     const totalQuestions = attempt.exam.questions ? attempt.exam.questions.length : attempt.answers.length;
-    const qCount = await prisma.question.count({ where: { examId: attempt.examId } });
-    const percentage = Math.round((attempt.score / (qCount * 1)) * 100);
+
+    // Fix: Calculate total marks based on question weightage, fallback to 1 if not defined
+    const totalMaxMarks = attempt.exam.questions.reduce((sum, q) => sum + (q.marks || 1), 0);
+
+    // Calculate percentage based on totalMaxMarks
+    const percentage = totalMaxMarks > 0 ? Math.round((attempt.score / totalMaxMarks) * 100) : 0;
+
     const isPassed = percentage >= attempt.exam.passingPercentage;
 
     return (
@@ -85,12 +90,12 @@ export default async function ResultPage({ params }) {
                     <div className={`text-lg font-medium ${isPassed ? 'text-green-600' : 'text-red-500'}`}>
                         {isPassed ? 'Excellent Work! You Passed.' : 'Keep Learning. You can do better.'}
                     </div>
-                    <div className="text-sm text-muted-foreground mt-1">Score: {attempt.score} / {qCount}</div>
+                    <div className="text-sm text-muted-foreground mt-1">Score: {attempt.score} / {totalMaxMarks}</div>
 
                     <div className="grid grid-cols-2 gap-4 mt-8 max-w-xs mx-auto text-left">
                         <div className="bg-muted/50 p-4 rounded-xl border">
-                            <div className="text-xs text-muted-foreground uppercase font-bold">Total</div>
-                            <div className="text-2xl font-bold text-gray-700">{qCount}</div>
+                            <div className="text-xs text-muted-foreground uppercase font-bold">Total Questions</div>
+                            <div className="text-2xl font-bold text-gray-700">{totalQuestions}</div>
                         </div>
                         <div className="bg-muted/50 p-4 rounded-xl border">
                             <div className="text-xs text-muted-foreground uppercase font-bold">Attempted</div>
@@ -115,7 +120,7 @@ export default async function ResultPage({ params }) {
                             studentName={session.user.name}
                             examTitle={attempt.exam.title}
                             score={attempt.score}
-                            total={qCount}
+                            total={totalMaxMarks}
                             date={attempt.submitTime}
                         />
                     </div>

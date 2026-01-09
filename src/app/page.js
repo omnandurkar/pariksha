@@ -62,19 +62,22 @@ export default function Home() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8, duration: 1 }}
-          className="mt-32 w-full max-w-5xl grid md:grid-cols-3 gap-12 border-t border-gray-100 pt-16"
+          className="mt-32 w-full max-w-5xl grid md:grid-cols-3 gap-6 border-t border-gray-100 pt-16"
         >
           <MinimalFeature
             title="Calm by Design"
             desc="Reduced visual noise and guided breathing exercises help students perform at their best."
+            className="bg-teal-50/60 dark:bg-teal-900/10 border border-teal-100/50 shadow-sm shadow-teal-100/50"
           />
           <MinimalFeature
             title="Uncompromising Security"
             desc="Ethical proctoring and auto-save functionality ensure fairness without invasion."
+            className="bg-violet-50/60 dark:bg-violet-900/10 border border-violet-100/50 shadow-sm shadow-violet-100/50"
           />
           <MinimalFeature
             title="Insightful Analytics"
             desc="Go beyond scores with detailed performance breakdowns and history tracking."
+            className="bg-orange-50/60 dark:bg-orange-900/10 border border-orange-100/50 shadow-sm shadow-orange-100/50"
           />
         </motion.div>
 
@@ -88,9 +91,9 @@ export default function Home() {
   );
 }
 
-function MinimalFeature({ title, desc }) {
+function MinimalFeature({ title, desc, className }) {
   return (
-    <div className="space-y-3">
+    <div className={`space-y-3 p-6 rounded-2xl transition-all hover:shadow-md ${className}`}>
       <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
         <div className="h-1 w-1 bg-gray-900 rounded-full" />
         {title}

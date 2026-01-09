@@ -38,7 +38,7 @@ export async function bulkCreateAndAssign(examId, inputData) {
                 if (!name || !password) {
                     // Can't create without name/pass if input was just email or incomplete object
                     // Skip this user
-                    console.log(`Skipping ${email}: User not found and missing creation details.`);
+                    // console.log(`Skipping ${email}: User not found and missing creation details.`);
                     errorCount++;
                     continue;
                 }
