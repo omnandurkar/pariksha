@@ -11,6 +11,15 @@ export default async function ExamInstructionsPage({ params }) {
         where: { id },
         include: { _count: { select: { questions: true } } }
     })
+    // forceFullscreen is a scalar, so it's returned by default unless there's a strict select. 
+    // findUnique returns all scalars by default.
+    // So 'forceFullscreen' should already be in 'exam'. 
+    // Let's verify standard Prisma behavior. Yes, scalars are included. 
+    // No change needed in page.js unless he used 'select'. He used 'include'.
+    // Wait, 'include' adds relations, but scalars are there.
+    // I will verify page.js content again.
+    // Line 12: include: { _count: { select: { questions: true } } }
+    // This is fine. forceFullscreen will be there.
 
     if (!exam) return notFound()
 

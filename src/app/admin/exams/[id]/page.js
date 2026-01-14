@@ -9,6 +9,10 @@ import { EditExamDialog } from "./edit-exam-dialog"
 import { AssignmentsDialog } from "./assignments-dialog"
 import { Badge } from "@/components/ui/badge"
 
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
+import { BarChart2 } from "lucide-react"
+
 export default async function ManageExamPage({ params }) {
     const { id } = await params
 
@@ -59,7 +63,15 @@ export default async function ManageExamPage({ params }) {
                         <span>{exam.questions.length} Questions</span>
                     </div>
                 </div>
-                <PublishResultsToggle examId={exam.id} initialStatus={exam.publishResults} resultDate={exam.resultDate} />
+                <div className="flex items-center gap-2 h-10">
+                    <Link href={`/admin/results/${exam.id}`}>
+                        <Button variant="outline" className="gap-2">
+                            <BarChart2 className="w-4 h-4" />
+                            See Results
+                        </Button>
+                    </Link>
+                    <PublishResultsToggle examId={exam.id} initialStatus={exam.publishResults} resultDate={exam.resultDate} />
+                </div>
             </div>
 
             <div className="grid gap-8 md:grid-cols-[2fr_1fr]">

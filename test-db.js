@@ -3,13 +3,11 @@ const prisma = new PrismaClient();
 
 async function main() {
     try {
-        console.log("Connecting to DB...");
-        const userCount = await prisma.user.count();
-        console.log("Connection successful. User count:", userCount);
-        const admin = await prisma.user.findFirst({ where: { role: 'ADMIN' } });
-        console.log("Admin exists:", !!admin);
+        console.log('Connecting to DB...');
+        const count = await prisma.user.count();
+        console.log(`Successfully connected! User count: ${count}`);
     } catch (e) {
-        console.error("DB Connection Failed:", e);
+        console.error('Connection failed:', e);
     } finally {
         await prisma.$disconnect();
     }

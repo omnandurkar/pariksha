@@ -9,6 +9,9 @@ import { toast } from "sonner"
 import { Loader2, AlertTriangle, Flag, LayoutGrid, CheckCircle2, ChevronLeft, ChevronRight, X } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion, AnimatePresence } from "framer-motion"
+import { MathText } from "@/components/math-text"
+import { Calculator } from "@/components/calculator"
+import { Calculator as CalculatorIcon } from "lucide-react"
 
 export function ExamPlayer({ exam, questions, attemptId, endTime }) {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
@@ -19,6 +22,7 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
     const [tabSwitches, setTabSwitches] = useState(0)
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
     const [showReviewModal, setShowReviewModal] = useState(false)
+    const [showCalculator, setShowCalculator] = useState(false)
     const router = useRouter()
 
     // Defensive check for empty questions
@@ -142,7 +146,57 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
         return () => clearInterval(interval)
     }, [endTime])
 
-    // Security Logic
+    // Fullscreen Enforcement Logic
+    const [isFullscreenBlocked, setIsFullscreenBlocked] = useState(false);
+
+    const requestFullscreen = useCallback(async () => {
+        try {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                await elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) { /* Safari */
+                await elem.webkitRequestFullscreen();
+            } else if (elem.msRequestFullscreen) { /* IE11 */
+                await elem.msRequestFullscreen();
+            }
+        } catch (err) {
+            console.error("Error attempting to enable fullscreen:", err);
+        }
+    }, []);
+
+    useEffect(() => {
+        if (!exam.forceFullscreen) return;
+
+        const handleFullscreenChange = () => {
+            const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+            if (!isFullscreen) {
+                setIsFullscreenBlocked(true);
+            } else {
+                setIsFullscreenBlocked(false);
+            }
+        };
+
+        // Check initial state - if not full screen, block immediately.
+        // This forces the user to interact with the overlay button to enter fullscreen.
+        const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement;
+        if (!isFullscreen) {
+            setIsFullscreenBlocked(true);
+        }
+
+        document.addEventListener("fullscreenchange", handleFullscreenChange);
+        document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+        document.addEventListener("mozfullscreenchange", handleFullscreenChange);
+        document.addEventListener("MSFullscreenChange", handleFullscreenChange);
+
+        return () => {
+            document.removeEventListener("fullscreenchange", handleFullscreenChange);
+            document.removeEventListener("webkitfullscreenchange", handleFullscreenChange);
+            document.removeEventListener("mozfullscreenchange", handleFullscreenChange);
+            document.removeEventListener("MSFullscreenChange", handleFullscreenChange);
+        };
+    }, [exam.forceFullscreen]);
+
+    // General Security Logic (Tab Switching, etc.)
     useEffect(() => {
         const handleVisibilityChange = () => {
             if (document.hidden) {
@@ -153,11 +207,13 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
                 });
             }
         };
+
         document.addEventListener("visibilitychange", handleVisibilityChange);
         const prevent = (e) => e.preventDefault();
         window.addEventListener("contextmenu", prevent);
         window.addEventListener("copy", prevent);
         window.addEventListener("paste", prevent);
+
         return () => {
             document.removeEventListener("visibilitychange", handleVisibilityChange);
             window.removeEventListener("contextmenu", prevent);
@@ -205,6 +261,28 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
     const answeredCount = Object.keys(answers).length
     const isLastQuestion = currentQuestionIndex === questions.length - 1
 
+    if (isFullscreenBlocked) {
+        return (
+            <div className="fixed inset-0 z-50 bg-background flex flex-col items-center justify-center p-4 text-center space-y-6">
+                <div className="bg-red-100 p-6 rounded-full">
+                    <AlertTriangle className="h-16 w-16 text-red-600" />
+                </div>
+                <h2 className="text-3xl font-bold text-red-600">Security Violation Detected</h2>
+                <div className="max-w-md space-y-2 text-muted-foreground">
+                    <p>Fullscreen mode exited. As per exam rules, you must remain in fullscreen mode at all times.</p>
+                    <p>Click below to return to the exam.</p>
+                </div>
+                <Button
+                    size="lg"
+                    onClick={requestFullscreen}
+                    className="bg-red-600 hover:bg-red-700 text-white font-bold"
+                >
+                    Return to Fullscreen
+                </Button>
+            </div>
+        )
+    }
+
     return (
         <div className="flex flex-col h-dvh bg-gray-50/50 dark:bg-background select-none overflow-hidden font-sans">
             {/* 1. Smart Timer Header */}
@@ -242,6 +320,18 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
                         <div className="w-2 h-2 rounded-full bg-current animate-pulse"></div>
                         {formatTime(timeLeft)}
                     </div>
+
+                    {exam.allowCalculator && (
+                        <Button
+                            variant={showCalculator ? "secondary" : "ghost"}
+                            size="icon"
+                            onClick={() => setShowCalculator(!showCalculator)}
+                            title="Toggle Calculator"
+                        >
+                            <CalculatorIcon className="h-5 w-5" />
+                        </Button>
+                    )}
+
                     <Button
                         variant="ghost"
                         size="icon"
@@ -299,7 +389,7 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
                         </div>
 
                         <h2 className="text-xl md:text-2xl font-medium mb-8 leading-relaxed text-gray-800 dark:text-foreground">
-                            {currentQuestion.text}
+                            <MathText text={currentQuestion.text} />
                         </h2>
 
                         <div className="space-y-3 max-w-3xl">
@@ -323,7 +413,7 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
                                         {answers[currentQuestion.id] === option.id && <motion.div layoutId="dot" className="h-3 w-3 rounded-full bg-primary" />}
                                     </div>
                                     <span className={cn("text-lg", answers[currentQuestion.id] === option.id ? "font-medium text-primary" : "text-gray-700 dark:text-gray-300")}>
-                                        {option.text}
+                                        <MathText text={option.text} />
                                     </span>
                                 </motion.div>
                             ))}
@@ -430,6 +520,11 @@ export function ExamPlayer({ exam, questions, attemptId, endTime }) {
                     />
                 )}
             </div>
+
+            {/* Calculator Overlay */}
+            <AnimatePresence>
+                {showCalculator && <Calculator onClose={() => setShowCalculator(false)} />}
+            </AnimatePresence>
 
             {/* 4. Review Before Submit Modal */}
             <AnimatePresence>

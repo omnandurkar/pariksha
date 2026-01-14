@@ -49,7 +49,22 @@ export default function PreExamView({ exam, userId }) {
     // And added to dependency array? If we add it, we need useCallback.
 
 
-    const handleProceed = () => {
+    const handleProceed = async () => {
+        // Attempt fullscreen immediately on user click
+        if (exam.forceFullscreen) {
+            try {
+                const elem = document.documentElement;
+                if (elem.requestFullscreen) {
+                    await elem.requestFullscreen();
+                } else if (elem.webkitRequestFullscreen) {
+                    await elem.webkitRequestFullscreen();
+                }
+            } catch (err) {
+                console.error("Fullscreen request failed:", err);
+                toast.error("Could not enter fullscreen. Please check permissions.");
+                // We don't block here, we let the ExamPlayer security logic handle the blocking if it fails.
+            }
+        }
         setStep("calm")
     }
 

@@ -8,6 +8,8 @@ import { auth } from "@/lib/auth";
 import { Badge } from "@/components/ui/badge";
 import { Clock, Calendar, Lock, AlertCircle, PlayCircle, Award } from "lucide-react";
 import { StudentJourneyDashboard } from "./student-journey-dashboard";
+import { AnnouncementBanner } from "@/components/announcement-banner";
+import { ContinueExamButton } from "@/components/continue-exam-button";
 
 async function getData(userId) {
     const exams = await prisma.exam.findMany({
@@ -36,7 +38,18 @@ async function getData(userId) {
         orderBy: { startTime: 'desc' }
     });
 
-    return { exams, history };
+    const announcements = await prisma.announcement.findMany({
+        where: {
+            isActive: true,
+            OR: [
+                { expiresAt: null },
+                { expiresAt: { gt: new Date() } }
+            ]
+        },
+        orderBy: { createdAt: 'desc' }
+    });
+
+    return { exams, history, announcements };
 }
 
 export const metadata = {
@@ -46,7 +59,7 @@ export const metadata = {
 export default async function StudentDashboard() {
     const session = await auth();
     if (!session?.user) return <div className="p-10 text-center">Please log in to continue.</div>; // Or redirect
-    const { exams, history } = await getData(session.user.id);
+    const { exams, history, announcements } = await getData(session.user.id);
     const firstName = session.user.name?.split(" ")[0] || "Student";
 
     // Time-based greeting (Server side rendering based on server time, client hydration might differ but acceptable for greetings)
@@ -55,6 +68,7 @@ export default async function StudentDashboard() {
 
     return (
         <div className="space-y-8 pb-10">
+            <AnnouncementBanner announcements={announcements} />
             {/* 1. Header with Greeting */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 animate-in fade-in slide-in-from-top-4 duration-500">
                 <div>
@@ -145,14 +159,10 @@ export default async function StudentDashboard() {
                                 } else if (latestAttempt?.status === 'STARTED') {
                                     statusMessage = "In Progress";
                                     actionButton = (
-                                        <Button asChild className="w-full animate-pulse-slow font-semibold relative overflow-hidden group">
-                                            <Link href={`/exam/${exam.id}/play`}>
-                                                <span className="relative z-10 flex items-center justify-center gap-2">
-                                                    Continue Exam <PlayCircle className="h-4 w-4" />
-                                                </span>
-                                                <span className="absolute inset-0 bg-primary/10 group-hover:bg-primary/20 transition-all duration-300 transform scale-x-0 group-hover:scale-x-100 origin-left"></span>
-                                            </Link>
-                                        </Button>
+                                        <ContinueExamButton
+                                            examId={exam.id}
+                                            forceFullscreen={exam.forceFullscreen}
+                                        />
                                     )
                                 } else {
                                     // Ready to Start

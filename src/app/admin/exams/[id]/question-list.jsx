@@ -7,6 +7,7 @@ import { Trash2 } from "lucide-react"
 import { deleteQuestion } from "./actions"
 import { toast } from "sonner"
 import { useState } from "react"
+import { MathText } from "@/components/math-text"
 
 export function QuestionList({ questions, examId }) {
     const [deletingId, setDeletingId] = useState(null);
@@ -34,7 +35,7 @@ export function QuestionList({ questions, examId }) {
                     <CardHeader className="flex flex-row items-start justify-between pb-2">
                         <div className="font-semibold text-lg flex gap-2">
                             <span className="text-muted-foreground">{index + 1}.</span>
-                            {q.text}
+                            <MathText text={q.text} />
                         </div>
                         <Button variant="ghost" size="icon" disabled={deletingId === q.id} onClick={() => handleDelete(q.id)}>
                             <Trash2 className="h-4 w-4 text-red-500" />
@@ -44,7 +45,8 @@ export function QuestionList({ questions, examId }) {
                         {q.options.map((opt) => (
                             <div key={opt.id} className={`flex items-center gap-2 px-3 py-2 rounded border ${opt.isCorrect ? 'bg-green-50 border-green-200' : 'bg-background'}`}>
                                 <div className={`h-2 w-2 rounded-full ${opt.isCorrect ? 'bg-green-500' : 'bg-gray-300'}`} />
-                                <span className={opt.isCorrect ? 'font-medium text-green-700' : ''}>{opt.text}</span>
+                                <div className={`h-2 w-2 rounded-full ${opt.isCorrect ? 'bg-green-500' : 'bg-gray-300'}`} />
+                                <span className={opt.isCorrect ? 'font-medium text-green-700' : ''}><MathText text={opt.text} /></span>
                                 {opt.isCorrect && <Badge variant="secondary" className="ml-auto text-xs bg-green-100 text-green-800 hover:bg-green-100">Correct</Badge>}
                             </div>
                         ))}
@@ -53,7 +55,8 @@ export function QuestionList({ questions, examId }) {
                         Marks: {q.marks}
                     </CardFooter>
                 </Card>
-            ))}
-        </div>
+            ))
+            }
+        </div >
     )
 }

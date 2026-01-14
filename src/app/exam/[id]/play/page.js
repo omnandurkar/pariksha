@@ -16,11 +16,18 @@ export default async function ExamPlayPage({ params }) {
         },
         include: {
             exam: {
-                include: {
+                select: {
+                    id: true,
+                    title: true,
+                    description: true,
+                    duration: true,
+                    randomizeQuestions: true,
+                    allowCalculator: true,
+                    forceFullscreen: true,
                     questions: {
                         include: {
                             options: {
-                                select: { id: true, text: true } // Hide isCorrect
+                                select: { id: true, text: true }
                             }
                         }
                     }
@@ -39,18 +46,19 @@ export default async function ExamPlayPage({ params }) {
         redirect(`/dashboard/exam/${id}`);
     }
 
-    // Shuffle questions for client (simple shuffle)
-    // Ideally this should be stored in DB to persist order, but for MVP shuffle on load is okay
-    // provided we map answers correctly by ID.
     // Use a simple copy to avoid mutation, satisfying some purity checks
     // eslint-disable-next-line react-hooks/purity
-    const shuffledQuestions = [...attempt.exam.questions].sort(() => Math.random() - 0.5);
+    // Shuffle questions if enabled
+    let questionsToUse = [...attempt.exam.questions];
+    if (attempt.exam.randomizeQuestions) {
+        questionsToUse.sort(() => Math.random() - 0.5);
+    }
 
     return (
         <div className="min-h-screen bg-background">
             <ExamPlayer
                 exam={attempt.exam}
-                questions={shuffledQuestions}
+                questions={questionsToUse}
                 attemptId={attempt.id}
                 endTime={new Date(attempt.startTime.getTime() + attempt.exam.duration * 60000)}
             />

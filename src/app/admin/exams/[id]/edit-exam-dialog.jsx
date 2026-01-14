@@ -49,7 +49,7 @@ export function EditExamDialog({ exam }) {
                     <Pencil className="h-4 w-4" />
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[500px] max-h-[85vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Edit Exam Details</DialogTitle>
                 </DialogHeader>
@@ -117,6 +117,26 @@ export function EditExamDialog({ exam }) {
                     <div className="flex items-center space-x-2 border p-3 rounded-md">
                         <Switch id="issueCertificate" name="issueCertificate" defaultChecked={exam.issueCertificate} />
                         <Label htmlFor="issueCertificate">Issue Certificate on Passing</Label>
+                    </div>
+
+                    <div className="flex items-center space-x-2 border p-3 rounded-md">
+                        <Switch id="randomizeQuestions" name="randomizeQuestions" defaultChecked={exam.randomizeQuestions} />
+                        <Label htmlFor="randomizeQuestions">Randomize Question Order</Label>
+                    </div>
+
+                    <div className="flex items-center space-x-2 border p-3 rounded-md">
+                        <Switch id="allowCalculator" name="allowCalculator" defaultChecked={exam.allowCalculator} />
+                        <Label htmlFor="allowCalculator">Allow Calculator</Label>
+                    </div>
+
+                    <div className="flex items-center space-x-2 border p-3 rounded-md">
+                        <Switch id="showLeaderboard" name="showLeaderboard" defaultChecked={exam.showLeaderboard} />
+                        <Label htmlFor="showLeaderboard">Show Leaderboard on Result Page</Label>
+                    </div>
+
+                    <div className="flex items-center space-x-2 border p-3 rounded-md bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-900/50">
+                        <Switch id="forceFullscreen" name="forceFullscreen" defaultChecked={exam.forceFullscreen} />
+                        <Label htmlFor="forceFullscreen" className="text-red-900 dark:text-red-200 font-medium">Force Fullscreen Mode (Strict Security)</Label>
                     </div>
 
                     <Button type="submit" className="w-full" disabled={isPending}>

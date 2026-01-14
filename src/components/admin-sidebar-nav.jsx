@@ -10,7 +10,8 @@ import {
     BarChart,
     ShieldAlert,
     UserPlus,
-    MessageSquare
+    MessageSquare,
+    Megaphone
 } from "lucide-react";
 
 const navItems = [
@@ -22,6 +23,7 @@ const navItems = [
     { href: "/admin/results", label: "Results", icon: BarChart },
     { href: "/admin/access", label: "Access Control", icon: ShieldAlert },
     { href: "/admin/feedback", label: "Feedback (Inbox)", icon: MessageSquare },
+    { href: "/admin/announcements", label: "Announcements", icon: Megaphone },
 ];
 
 export function AdminSidebarNav({ className, onNavClick }) {
